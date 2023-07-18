@@ -43,11 +43,11 @@ public:
 
 	float unit9;//知能生体応用実験//(3年:2，4年:2)
 
-	float unit10;//未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群：(3年:86以上,4年:104以上)
+	float unit10;//専門教育科目群//(3年:62)
 
-	float unit11;//総単位//(3年:112以上，4年:130以上)//
+	float unit11;//未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群：(3年:86以上,4年:104以上)
 
-	float unit12;//専門教育科目群//(3年:62)
+	float unit12;//総単位//(3年:112以上，4年:130以上)//
 
 	Unitnum3(float u1, float u2, float u3, float u4, float u5, float u6, float u7, float u8, float u9, float u10, float u11, float u12)
 		: unit1(u1), unit2(u2), unit3(u3), unit4(u4), unit5(u5), unit6(u6), unit7(u7), unit8(u8), unit9(u9), unit10(u10), unit11(u11), unit12(u12)
@@ -66,10 +66,13 @@ public:
 
 	float unit5;//総単位//(4年:130以上)
 
+	Unitnum4(float u1, float u2, float u3, float u4, float u5)
+		: unit1(u1), unit2(u2), unit3(u3), unit4(u4), unit5(u5)
+	{}
 };
 
 /*関数*/
-//文字入力をスペースで区切り，区切られた文字をクラスに格納する関数
+//文字入力をスペースで区切り，区切られた文字をクラスに格納する関数（イテレータの使用）
 void splitString(const string& line, vector<string>& elements) {
 	// 半角スペースを全角スペースに置換する
 	string replacedLine = line;
@@ -107,8 +110,7 @@ float unitsum(const vector<lecture>& lectures, const string& category, const str
 	}
 	return unitSum;
 }
-
-//単位数計算関数(専門教育科目群専用)
+//単位数計算関数(part2)
 float unitsum2(const vector<lecture>& lectures, const string& category, const string& kinds, const string& lecturename) {
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
@@ -118,8 +120,7 @@ float unitsum2(const vector<lecture>& lectures, const string& category, const st
 	}
 	return unitSum;
 }
-
-//単位数計算関数(授業番号ありバージョン)
+//単位数計算関数(part3)
 float unitsum3(const vector<lecture>& lectures, const string& category, const string& kinds, const string& lecturename, const string& lecturenum) {
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
@@ -130,7 +131,8 @@ float unitsum3(const vector<lecture>& lectures, const string& category, const st
 	return unitSum;
 }
 
-// 取得単位数と必要単位数を比較する関数
+
+// 取得単位数と必要単位数を比較する関数(3年)
 void compareUnits(const Unitnum3& acquired, const Unitnum3& required) {
 	cout << "=== 取得単位数と必要単位数の比較 ===" << endl;
 	// 各要素の比較を行い、結果に応じてメッセージを表示します
@@ -202,17 +204,80 @@ void compareUnits(const Unitnum3& acquired, const Unitnum3& required) {
 		&& acquired.unit10 >= required.unit10 && acquired.unit11 >= required.unit11 && acquired.unit12 >= required.unit12)
 	{
 		// 条件がすべて満たされた場合の処理
-		cout << "すべての条件を満たしています。" << endl;
+		cout << "必要単位数を満たしています" << endl;
 	}
 	else
 	{
 		// 条件が満たされなかった場合の処理
-		cout << "必要な条件が満たされていません。" << endl;
+		cout << "必要単位数を満たしていません" << endl;
 	}
 }
 
 
-//gpa 計算関数（未実装）
+// 取得単位数と必要単位数を比較する関数(卒業)
+void compareUnits2(const Unitnum4& acquired, const Unitnum4& required) {
+cout << "=== 取得単位数と必要単位数の比較 ===" << endl;
+// 各要素の比較を行い、結果に応じてメッセージを表示します
+if (acquired.unit1 >= required.unit1)
+cout << "取得単位数1 (" << acquired.unit1 << ") は十分です。" << endl;
+else
+cout << "取得単位数1 (" << acquired.unit1 << ") が不足しています。必要な単位数: " << required.unit1 << endl;
+
+if (acquired.unit2 >= required.unit2)
+cout << "取得単位数2 (" << acquired.unit2 << ") は十分です。" << endl;
+else
+cout << "取得単位数2 (" << acquired.unit2 << ") が不足しています。必要な単位数: " << required.unit2 << endl;
+
+// 各要素の比較を追加します
+if (acquired.unit3 >= required.unit3)
+cout << "取得単位数3 (" << acquired.unit3 << ") は十分です。" << endl;
+else
+cout << "取得単位数3 (" << acquired.unit3 << ") が不足しています。必要な単位数: " << required.unit3 << endl;
+
+if (acquired.unit4 >= required.unit4)
+cout << "取得単位数4 (" << acquired.unit4 << ") は十分です。" << endl;
+else
+cout << "取得単位数4 (" << acquired.unit4 << ") が不足しています。必要な単位数: " << required.unit4 << endl;
+
+if (acquired.unit5 >= required.unit5)
+cout << "取得単位数5 (" << acquired.unit5 << ") は十分です。" << endl;
+else
+cout << "取得単位数5 (" << acquired.unit5 << ") が不足しています。必要な単位数: " << required.unit5 << endl;
+
+
+// すべての要素の比較結果に応じた分岐を追加します
+if (acquired.unit1 >= required.unit1 && acquired.unit2 >= required.unit2 && acquired.unit3 >= required.unit3
+	&& acquired.unit4 >= required.unit4 && acquired.unit5 >= required.unit5 )
+{
+	// 条件がすべて満たされた場合の処理
+	cout << "必要単位数を満たしています" << endl;
+}
+else
+{
+	// 条件が満たされなかった場合の処理
+	cout << "必要単位数を満たしていません" << endl;
+}
+}
+
+//gpa 計算関数
+float calculateGPA(const vector<lecture>& lectures) {
+	float totalGradePoints = 0.0;
+	float totalUnits = 0.0;
+
+	for (const auto& lec : lectures) {
+		totalGradePoints += lec.value * lec.unit;
+		totalUnits += lec.unit;
+	}
+
+	if (totalUnits > 0) {
+		return totalGradePoints / totalUnits;
+	}
+	else {
+		return 0.0;
+	}
+}
+
+
 
 
 //メイン関数
@@ -222,6 +287,14 @@ int main() {
 	cout << "CAMPUSSQUAREにログイン -> 成績 -> 過去を含めた全成績を選択 -> 画面に表示するをクリック　の手順で成績を表示し，No.1から最後まで，表のすべての項目をコピーしたものを以下に貼り付けてください" << endl;
 	cout << "～注意事項～" << endl;
 	cout << "テキスト貼り付け時，警告が出ることがありますが，「強制的に貼り付け」をクリックして問題ないです．" << endl << endl;
+	
+	//コースを尋ねる
+	cout << "あなたの所属コースを選択してください（知能機械コース: 1, 生体機械コース: 2）: ";
+	int courseSelection;
+	cin >> courseSelection;
+	cout << "選択されたコース: " << courseSelection << endl;
+
+
 	/*入力テキストのファイルの保存*/
 	ofstream outfile("seiseki.txt");
 	//ファイル入力失敗時のメッセージ
@@ -285,66 +358,236 @@ int main() {
 	infile.close();
 	cout << "ファイルが確認できました" << endl;
 
-	//各区分けに置ける単位数の計算（知能機械専用）
-	vector<Unitnum3>num3;
-	float u111 = unitsum(lectures, "教養科目", "都市・社会・環境");
-	float u112 = unitsum(lectures, "教養科目", "科学・技術・産業");
-	float u121 = unitsum(lectures, "基盤科目", "社会科学領域");
-	float u122 = unitsum(lectures, "基盤科目", "自然科学領域");
-	float u13 = unitsum(lectures, "基礎科目", "キャリア教育");
+	////コースを尋ねる
+	//cout << "あなたの所属コースを選択してください（知能機械コース: 1, 生体機械コース: 2）: ";
+	//int courseSelection;
+	//cin >> courseSelection;
 
-	float u1 = u111 + u112 + u121 + u122 + u13;
+	//各区分けに置ける単位数の計算（三年進級要件）（システムデザイン学部）
+	vector<Unitnum3>num3;
+	float u1_1 = unitsum(lectures, "教養科目", "都市・社会・環境");
+	float u1_2 = unitsum(lectures, "教養科目", "科学・技術・産業");
+	float u1_3 = unitsum(lectures, "基盤科目", "社会科学領域");
+	float u1_4 = unitsum(lectures, "基盤科目", "自然科学領域");
+	float u1_5 = unitsum(lectures, "基礎科目", "キャリア教育");
+
+	float u1 = u1_1+ u1_2 + u1_3 + u1_4 + u1_5 ;
 	float u2 = unitsum(lectures, "基礎科目", "基礎ゼミナール");
 	float u3 = unitsum(lectures, "基礎科目", "情報科目");
 	float u4 = unitsum(lectures, "基礎科目", "実践英語");
 	float u5 = unitsum(lectures, "基礎科目", "理系共通基礎科目");
 
 	//コース共通基礎科目（必修）
-	float u61 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工業力学");
-	float u62 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "材料力学", "L0406");
-	float u63 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械製図", "L0413");//機械製図Ⅰ
-	float u64 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工業数学");
-	float u65 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機構学");
-	float u66 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械製図", "L0422");//機械製図Ⅱ
-	float u67 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械システム基礎実験");
-	float u68 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械工作実習");
+	float u6_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工業力学");
+	float u6_2 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "材料力学", "L0406");//材料力学Ⅰ
+	float u6_3 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械製図", "L0413");//機械製図Ⅰ
+	float u6_4 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工業数学");
+	float u6_5 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機構学");
+	float u6_6 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械製図", "L0422");//機械製図Ⅱ
+	float u6_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械システム基礎実験");
+	float u6_8 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械工作実習");
 
-	float u6 = u61 + u62 + u63 + u64 + u65 + u66 + u67 + u68;
+	float u6 = u6_1 + u6_2 + u6_3 + u6_4 + u6_5 + u6_6 + u6_7 + u6_8;
 
 	//コース共通基礎科目（選択）
-	float u71 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "計測工学");
-	float u72 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "プログラミング演習", "L0407");//プログラミング演習Ⅰ
-	float u73 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "基礎電気回路");
-	float u74 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "メカトロニクス@(Mechatronics)");
-	float u75 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械力学", "L0416");//機械力学Ⅰ
-	float u76 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "流体力学", "L0417");//流体力学Ⅰ
-	float u77 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "熱力学");
-	float u78 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "システム制御", "L0426");//システム制御Ⅰ
-	float u79 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "電子回路");
+	float u7_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "計測工学");
+	float u7_2 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "プログラミング演習", "L0407");//プログラミング演習Ⅰ
+	float u7_3 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "基礎電気回路");
+	float u7_4 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "メカトロニクス@(Mechatronics)");
+	float u7_5 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械力学", "L0416");//機械力学Ⅰ
+	float u7_6 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "流体力学", "L0417");//流体力学Ⅰ
+	float u7_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "熱力学");
+	float u7_8 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "システム制御", "L0426");//システム制御Ⅰ
+	float u7_9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "電子回路");
+	float u7 = u7_1 + u7_2 + u7_3 + u7_4 + u7_5 + u7_6 + u7_7 + u7_8 + u7_9;
 
-	float u7 = u71 + u72 + u73 + u74 + u75 + u76 + u77 + u78 + u79;
+	//コース共通専門科目，コース専門科目
+	//コース共通専門科目
+	float u8_1_1 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "材料力学","L0419");//材料力学Ⅱ
+	float u8_1_2 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械力学", "L0428");//機械力学Ⅱ
+	float u8_1_3 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "流体力学", "L0429");//流体力学Ⅱ
+	float u8_1_4 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "熱工学");
+	float u8_1_5 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械要素");
+	float u8_1_6 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "基礎加工学");
+	float u8_1_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械材料学");
+	float u8_1_8 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械工学演習", "L0437");//機械工学演習Ⅰ
+	float u8_1_9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械システム先端講義");
+	float u8_1_10 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "応用加工学");
+	float u8_1_11 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "マイクロ・ナノ工学");
+	float u8_1_12 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "機械工学演習", "L0456");//機械工学演習Ⅱ
+	float u8_1_13 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "インターンシップ");
+	float u8_1_14 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工場見学");
 
-	float u8 = unitsum(lectures, "専門教育科目", "システムデザイン学部") - u6 - u7;
+	float u8_1 = u8_1_1 + u8_1_2 + u8_1_3 + u8_1_4 + u8_1_5 + u8_1_6 + u8_1_7 + u8_1_8 + u8_1_9 + u8_1_10 + u8_1_11+ u8_1_12 + u8_1_13 + u8_1_14;
+	//コース専門科目
+	float u8_2 = 0;
+	if (courseSelection == 1) {//知能
+		float u8_2_0 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
+		float u8_2_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械概論");
+		float u8_2_2 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム解析");
+		float u8_2_3 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "ロボット運動学");
+		float u8_2_4 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能ロボット");
+		float u8_2_5 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "創造的ロボティクス演習","L0441"); //創造的ロボティクス演習Ⅰ
+		float u8_2_6 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム工学");
+		float u8_2_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "基礎設計工学");
+		float u8_2_8 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "システム制御","L0444");//システム制御Ⅱ
+		float u8_2_9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム制御演習");
+		float u8_2_10 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "プログラミング演習","L0446");//プログラミング演習Ⅱ
+		float u8_2_11 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械ゼミナール");
+		float u8_2_12 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "組込みシステム");
+		float u8_2_13 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "ロボットセンシング");
+		float u8_2_14 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "応用設計工学");
+		float u8_2_15 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム工学演習");
+		float u8_2_16 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械特別研究");
+		float u8_2_17 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "創造的ロボティクス演習", "L0471");//創造的ロボティクス演習Ⅱ
 
-	float u9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
+		u8_2 = u8_2_0 + u8_2_1 + u8_2_2 + u8_2_3 + u8_2_4 + u8_2_5 + u8_2_6 + u8_2_7 + u8_2_8 + u8_2_9 + u8_2_10 + u8_2_11 + u8_2_12 + u8_2_13 + u8_2_14 + u8_2_15 + u8_2_16 + u8_2_17;
+	}
+	else if (courseSelection == 2) {//生体
+		float u8_2_0 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械応用実験");
+		float u8_2_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械概論");
+		float u8_2_2 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体生理工学");
+		float u8_2_3 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体統計学");
+		float u8_2_4 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "バイオメカニクス");
+		float u8_2_5 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生理流体工学");
+		float u8_2_6 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "福祉機器工学"); 
+		float u8_2_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体計測工学");
+		float u8_2_8 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "エネルギー変換工学");
+		float u8_2_9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体材料強度工学");
+		float u8_2_10 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "生体機械工学演習","L0453");//生体機械工学演習Ⅰ
+		float u8_2_11 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械ゼミナール");
+		float u8_2_12 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "再生医工学");
+		float u8_2_13 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "人間工学");
+		float u8_2_14 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "数値解析法");
+		float u8_2_15 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "生体機械工学演習","L0466");//生体機械工学演習Ⅱ
+		float u8_2_16 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械特別研究");
+		float u8_2_17 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生命理論");
 
-	float u10 = u5 + u6 + u7 + u8;
-	float u11 = u1 + u2 + u3 + u4 + u5 + u6 + u7 + u8;
-	float u12 = u6 + u7 + u8;
+		u8_2 = u8_2_0 + u8_2_1 + u8_2_2 + u8_2_3 + u8_2_4 + u8_2_5 + u8_2_6 + u8_2_7 + u8_2_8 + u8_2_9 + u8_2_10 + u8_2_11 + u8_2_12 + u8_2_13 + u8_2_14 + u8_2_15 + u8_2_16 + u8_2_17;
+	}
+	else {
+		u8_2 = 0;
+	}
+	float u8 = u8_1+u8_2;
+
+	//知能・生体機械応用実験
+	float u9 = 0;
+	if (courseSelection == 1) {
+		u9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
+	}
+	else if (courseSelection == 2) {
+		u9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械応用実験");
+	}
+	else {
+		u9 = 0;
+	}
+
+	//専門教育科目群
+	//学部共通科目
+	float u1001 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "情報と職業");
+	float u1002 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "科学技術英語第一");
+	float u1003 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "科学技術英語第二");
+	float u1004 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システムデザイン論");
+	float u1005 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "経営工学概論");
+	float u1006 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工学倫理");
+	float u1007 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "産業と法規");
+	float u100 = u1001 + u1002 + u1003 + u1004 + u1005 + u1006 + u1007;
+
+	float u101 = 0;
+	if (courseSelection == 2) {//生体
+		float u820 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
+		float u821 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械概論");
+		float u822 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム解析");
+		float u823 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "ロボット運動学");
+		float u824 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能ロボット");
+		float u825 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "創造的ロボティクス演習", "L0441"); //創造的ロボティクス演習Ⅰ
+		float u826 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム工学");
+		float u827 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "基礎設計工学");
+		float u828 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "システム制御", "L0444");//システム制御Ⅱ
+		float u829 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "システム制御演習");
+		float u8210 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "プログラミング演習", "L0446");//プログラミング演習Ⅱ
+		u101 = u820 + u821 + u822 + u823 + u824 + u825 + u826 + u827 + u828 + u829 + u8210;
+	}
+	else if (courseSelection == 1) {//知能
+		float u820 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械応用実験");
+		float u821 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械概論");
+		float u822 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体生理工学");
+		float u823 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体統計学");
+		float u824 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "バイオメカニクス");
+		float u825 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生理流体工学");
+		float u826 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "福祉機器工学");
+		float u827 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体計測工学");
+		float u828 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "エネルギー変換工学");
+		float u829 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体材料強度工学");
+		float u8210 = unitsum3(lectures, "専門教育科目", "システムデザイン学部", "生体機械工学演習", "L0453");//生体機械工学演習Ⅰ
+		u101 = u820 + u821 + u822 + u823 + u824 + u825 + u826 + u827 + u828 + u829 +u8210;
+	}
+	else {
+		u101 = 0;
+	}
+	float u10 = u6 + u7 + u8 + u100+ u101;
+
+	//未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群
+	float u111 = unitsum(lectures, "基礎科目", "未修言語");
+	float u112 = unitsum(lectures, "基礎科目", "保険体育");
+	float u11 = u10 + u5 + u111 + u112;
+
+	//総単位
+	float u12 = u11 + u1 + u2 + u3 + u4;
 
 	//取得単位数の格納
 	Unitnum3 num(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12);
 	num3.push_back(num);
 
 	//必要単位数の格納
-	Unitnum3 nnum(14, 2, 2, 8, 20, 16, 10, 32, 2, 86, 112, 62);
+	Unitnum3 nnum(14, 2, 2, 8, 20, 16, 10, 32, 2, 62, 86, 112);
 	num3.push_back(nnum);
 
 	//必要単位数と取得単位数の比較
 	compareUnits(num3[0], num3[1]);
 
 
+	/*卒業要件*/
+	vector<Unitnum4>num4;
+	//コース共通基礎科目,コース共通専門科目,コース専門科目
+	float u21 = u6 + u7 + u8;
 
+	//知能・生体機械特別研究
+	float u22 = 0;
+	if (courseSelection == 1) {
+		u2 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械特別研究");
+	}
+	else if (courseSelection == 2) {
+		u2 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械特別研究");
+	}
+	else {
+		u2 = 0;
+	}
+	//専門教育科目群
+	float u23 = u10;
+	//未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群
+	float u24 = u11;
+	//総単位
+	float u25 = u12;
+
+	//取得単位数の格納
+	Unitnum4 num2(u21, u22, u23, u24, u25);
+	num4.push_back(num2);
+
+	//必要単位数の格納
+	Unitnum4 nnum2(66, 8, 80, 104, 130);
+	num4.push_back(nnum2);
+
+	//必要単位数と取得単位数の比較
+	compareUnits2(num4[0], num4[1]);
+
+
+	//GPAの計算と順位計算
+	float gpa = calculateGPA(lectures);
+	cout << "取得単位のGPA（Grade Point Average）は: " << gpa << "です。" << endl;
+
+	// 順位を計算して表示
+	
 
 
 	//確認
