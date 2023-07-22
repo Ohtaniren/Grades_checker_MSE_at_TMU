@@ -1,106 +1,108 @@
-#include <iostream>
+ï»¿#include <iostream>
 #include <fstream>
 #include <vector>
 #include <string>
 #include <regex>
 
+
 using namespace std;
 
-/*ƒNƒ‰ƒX*/
-//ö‹ÆƒNƒ‰ƒX‚Ì’è‹`i‰È–ÚŒQC‰È–Úí—ŞC‰È–Ú–¼C’PˆÊC¬ÑC”N“xj
+/*ã‚¯ãƒ©ã‚¹*/
+//æˆæ¥­ã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆç§‘ç›®ç¾¤ï¼Œç§‘ç›®ç¨®é¡ï¼Œç§‘ç›®åï¼Œå˜ä½ï¼Œæˆç¸¾ï¼Œå¹´åº¦ï¼‰
 struct lecture {
 public:
-	string category;//‰È–ÚŒQ‚Ì’Ç‰Á
-	string lecturekinds;//‰È–Úí—Ş‚Ì’Ç‰Á
-	string lecturenum;
+	string category;//ç§‘ç›®ç¾¤ã®è¿½åŠ 
+	string lecturekinds;//ç§‘ç›®ç¨®é¡ã®è¿½åŠ 
+	int lecturenum;
 	string lecturename;
 	float unit;
 	int value;
 	int year;
 
-	lecture(const string& c, const string& k, const string& num, const string& name, float u, int v, int y)
+	lecture(const string& c, const string& k, int num, const string& name, float u, int v, int y)
 		: category(c), lecturekinds(k), lecturenum(num), lecturename(name), unit(u), value(v), year(y)
 	{}
 };
-//3”N•K—v’PˆÊ”ƒNƒ‰ƒX‚Ì’è‹`iŒvZ‚µ‚½‚à‚Ì‚ğ‚±‚±‚É‚ ‚Ä‚Í‚ß‚Ä‚¢‚­j
+//3å¹´å¿…è¦å˜ä½æ•°ã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆè¨ˆç®—ã—ãŸã‚‚ã®ã‚’ã“ã“ã«ã‚ã¦ã¯ã‚ã¦ã„ãï¼‰
 struct Unitnum3 {
 public:
-	float unit1;//‹³—{‰È–ÚŒQCŠî”Õ‰È–ÚŒQCƒLƒƒƒŠƒA‹³ˆç‚Ì’PˆÊ”//(3”N:14ˆÈãC4”N:14ˆÈã)
+	float unit1;//æ•™é¤Šç§‘ç›®ç¾¤ï¼ŒåŸºç›¤ç§‘ç›®ç¾¤ï¼Œã‚­ãƒ£ãƒªã‚¢æ•™è‚²ã®å˜ä½æ•°//(3å¹´:14ä»¥ä¸Šï¼Œ4å¹´:14ä»¥ä¸Š)
 
-	float unit2;//Šî‘bƒ[ƒ~ƒi[ƒ‹//(3”N:2C4”N:2)
+	float unit2;//åŸºç¤ã‚¼ãƒŸãƒŠãƒ¼ãƒ«//(3å¹´:2ï¼Œ4å¹´:2)
 
-	float unit3;//î•ñƒŠƒeƒ‰ƒV[À‘H//(3”N:2C4”N:2)
+	float unit3;//æƒ…å ±ãƒªãƒ†ãƒ©ã‚·ãƒ¼å®Ÿè·µ//(3å¹´:2ï¼Œ4å¹´:2)
 
-	float unit4;//Œ¾Œê‰È–ÚiÀ‘H‰pŒêj//(3”N:8C4”N:8)
+	float unit4;//è¨€èªç§‘ç›®ï¼ˆå®Ÿè·µè‹±èªï¼‰//(3å¹´:8ï¼Œ4å¹´:8)
 
-	float unit5;//—Œn‹¤’ÊŠî‘b‰È–Ú//(3”N:20ˆÈãC4”N:20ˆÈã)
+	float unit5;//ç†ç³»å…±é€šåŸºç¤ç§‘ç›®//(3å¹´:20ä»¥ä¸Šï¼Œ4å¹´:20ä»¥ä¸Š)
 
-	float unit6;//ƒR[ƒX‹¤’ÊŠî‘b‰È–Úi•KCjF//(3”N:16)
+	float unit6;//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ç§‘ç›®ï¼ˆå¿…ä¿®ï¼‰ï¼š//(3å¹´:16)
 
-	float unit7;//ƒR[ƒX‹¤’ÊŠî‘b‰È–Úi‘I‘ğjF//(3”N:10ˆÈã)
+	float unit7;//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ç§‘ç›®ï¼ˆé¸æŠï¼‰ï¼š//(3å¹´:10ä»¥ä¸Š)
 
-	float unit8;//ƒR[ƒX‹¤’Êê–åCƒR[ƒXê–å‰È–ÚŒQF//(32’PˆÊˆÈã–ƒR[ƒXê–å‰È–ÚŒQFŠ‘®ƒR[ƒXi’m”\ / ¶‘Ìj‚Ì‰È–Ú‚ÉŒÀ‚é)
+	float unit8;//ã‚³ãƒ¼ã‚¹å…±é€šå°‚é–€ï¼Œã‚³ãƒ¼ã‚¹å°‚é–€ç§‘ç›®ç¾¤ï¼š//(32å˜ä½ä»¥ä¸Šï¼Šã‚³ãƒ¼ã‚¹å°‚é–€ç§‘ç›®ç¾¤ï¼šæ‰€å±ã‚³ãƒ¼ã‚¹ï¼ˆçŸ¥èƒ½ / ç”Ÿä½“ï¼‰ã®ç§‘ç›®ã«é™ã‚‹)
 
-	float unit9;//’m”\¶‘Ì‰—pÀŒ±//(3”N:2C4”N:2)
+	float unit9;//çŸ¥èƒ½ç”Ÿä½“å¿œç”¨å®Ÿé¨“//(3å¹´:2ï¼Œ4å¹´:2)
 
-	float unit10;//ê–å‹³ˆç‰È–ÚŒQ//(3”N:62)
+	float unit10;//å°‚é–€æ•™è‚²ç§‘ç›®ç¾¤//(3å¹´:62)
 
-	float unit11;//–¢CŒ¾Œê‰È–ÚC•ÛŒ’‘Ìˆç‰È–ÚC—Œn‹¤’ÊŠî‘b‰È–ÚCê–å‹³ˆç‰È–ÚŒQF(3”N:86ˆÈã,4”N:104ˆÈã)
+	float unit11;//æœªä¿®è¨€èªç§‘ç›®ï¼Œä¿å¥ä½“è‚²ç§‘ç›®ï¼Œç†ç³»å…±é€šåŸºç¤ç§‘ç›®ï¼Œå°‚é–€æ•™è‚²ç§‘ç›®ç¾¤ï¼š(3å¹´:86ä»¥ä¸Š,4å¹´:104ä»¥ä¸Š)
 
-	float unit12;//‘’PˆÊ//(3”N:112ˆÈãC4”N:130ˆÈã)//
+	float unit12;//ç·å˜ä½//(3å¹´:112ä»¥ä¸Šï¼Œ4å¹´:130ä»¥ä¸Š)//
 
 	Unitnum3(float u1, float u2, float u3, float u4, float u5, float u6, float u7, float u8, float u9, float u10, float u11, float u12)
 		: unit1(u1), unit2(u2), unit3(u3), unit4(u4), unit5(u5), unit6(u6), unit7(u7), unit8(u8), unit9(u9), unit10(u10), unit11(u11), unit12(u12)
 	{}
 };
-//4”N•K—v’PˆÊ”(‘²‹Æ—vŒ)ƒNƒ‰ƒX‚Ì’è‹`iŒvZ‚µ‚½‚à‚Ì‚ğ‚±‚±‚É‚ ‚Ä‚Í‚ß‚Ä‚¢‚­j
+//4å¹´å¿…è¦å˜ä½æ•°(å’æ¥­è¦ä»¶)ã‚¯ãƒ©ã‚¹ã®å®šç¾©ï¼ˆè¨ˆç®—ã—ãŸã‚‚ã®ã‚’ã“ã“ã«ã‚ã¦ã¯ã‚ã¦ã„ãï¼‰
 struct Unitnum4 {
 public:
-	float unit1;//ƒR[ƒX‹¤’ÊŠî‘b‚È‚Ç//(4”N:66ˆÈã)
+	float unit1;//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ãªã©//(4å¹´:66ä»¥ä¸Š)
 
-	float unit2;//“Á•ÊŒ¤‹†//(4”N:8)
+	float unit2;//ç‰¹åˆ¥ç ”ç©¶//(4å¹´:8)
 
-	float unit3;//ê–å‹³ˆç‰È–ÚŒQ//(4”N:80)
+	float unit3;//å°‚é–€æ•™è‚²ç§‘ç›®ç¾¤//(4å¹´:80)
 
-	float unit4;//–¢CŒ¾Œê‰È–ÚC•ÛŒ’‘Ìˆç‰È–ÚC—Œn‹¤’ÊŠî‘b‰È–ÚCê–å‹³ˆç‰È–ÚŒQ//(4”N:104ˆÈã)
+	float unit4;//æœªä¿®è¨€èªç§‘ç›®ï¼Œä¿å¥ä½“è‚²ç§‘ç›®ï¼Œç†ç³»å…±é€šåŸºç¤ç§‘ç›®ï¼Œå°‚é–€æ•™è‚²ç§‘ç›®ç¾¤//(4å¹´:104ä»¥ä¸Š)
 
-	float unit5;//‘’PˆÊ//(4”N:130ˆÈã)
+	float unit5;//ç·å˜ä½//(4å¹´:130ä»¥ä¸Š)
 
 	Unitnum4(float u1, float u2, float u3, float u4, float u5)
 		: unit1(u1), unit2(u2), unit3(u3), unit4(u4), unit5(u5)
 	{}
 };
 
-/*ŠÖ”*/
-//•¶š“ü—Í‚ğƒXƒy[ƒX‚Å‹æØ‚èC‹æØ‚ç‚ê‚½•¶š‚ğƒNƒ‰ƒX‚ÉŠi”[‚·‚éŠÖ”iƒCƒeƒŒ[ƒ^‚Ìg—pj
+/*é–¢æ•°*/
+
+//æ–‡å­—å…¥åŠ›ã‚’ã‚¹ãƒšãƒ¼ã‚¹ã§åŒºåˆ‡ã‚Šï¼ŒåŒºåˆ‡ã‚‰ã‚ŒãŸæ–‡å­—ã‚’ã‚¯ãƒ©ã‚¹ã«æ ¼ç´ã™ã‚‹é–¢æ•°ï¼ˆã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã®ä½¿ç”¨ï¼‰
 void splitString(const string& line, vector<string>& elements) {
-	// ”¼ŠpƒXƒy[ƒX‚ğ‘SŠpƒXƒy[ƒX‚É’uŠ·‚·‚é
+	// åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã«ç½®æ›ã™ã‚‹
 	string replacedLine = line;
 	for (char& c : replacedLine) {
-		if (c == ' ') { // ”¼ŠpƒXƒy[ƒX‚ğ‘SŠpƒXƒy[ƒX‚É’uŠ·
-			c = '@';
+		if (c == ' ' ) { // åŠè§’ã‚¹ãƒšãƒ¼ã‚¹ã‚’å…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ã«ç½®æ›
+			c = 'ã€€';
 		}
 	}
 
-	regex re("\\s+"); // ³‹K•\Œ»ƒpƒ^[ƒ“: 1‚ÂˆÈã‚Ì‹ó”’•¶ši‘SŠpƒXƒy[ƒXj‚Éƒ}ƒbƒ`
-	sregex_token_iterator it(replacedLine.begin(), replacedLine.end(), re, -1); // ƒCƒeƒŒ[ƒ^‚Ìg—p
+	regex re("\\s+"); // æ­£è¦è¡¨ç¾ãƒ‘ã‚¿ãƒ¼ãƒ³: 1ã¤ä»¥ä¸Šã®ç©ºç™½æ–‡å­—ï¼ˆå…¨è§’ã‚¹ãƒšãƒ¼ã‚¹ï¼‰ã«ãƒãƒƒãƒ
+	sregex_token_iterator it(replacedLine.begin(), replacedLine.end(), re, -1); // ã‚¤ãƒ†ãƒ¬ãƒ¼ã‚¿ã®ä½¿ç”¨
 	sregex_token_iterator end;
 	while (it != end) {
 		elements.push_back(*it++);
 	}
 }
 
-//G‚ğ4A—D‚ğ3A—Ç‚ğ2A‰Â‚ğ1A•s‰Â‚ğ0‚Ì”’l‚É•ÏŠ·‚·‚éŠÖ”
+//ç§€ã‚’4ã€å„ªã‚’3ã€è‰¯ã‚’2ã€å¯ã‚’1ã€ä¸å¯ã‚’0ã®æ•°å€¤ã«å¤‰æ›ã™ã‚‹é–¢æ•°
 int convertGradeToValue(const string& grade) {
-	if (grade == "G") return 4;
-	else if (grade == "—D") return 3;
-	else if (grade == "—Ç") return 2;
-	else if (grade == "‰Â") return 1;
-	else if (grade == "•s‰Â")return 0;
-	else return -1;// –¢’è‹`‚Ì¬Ñ‚ª“n‚³‚ê‚½ê‡‚ÌƒfƒtƒHƒ‹ƒg’l
+	if (grade == "ç§€") return 4;
+	else if (grade == "å„ª") return 3;
+	else if (grade == "è‰¯") return 2;
+	else if (grade == "å¯") return 1;
+	else if (grade == "ä¸å¯")return 0;
+	else return -1;// æœªå®šç¾©ã®æˆç¸¾ãŒæ¸¡ã•ã‚ŒãŸå ´åˆã®ãƒ‡ãƒ•ã‚©ãƒ«ãƒˆå€¤
 }
 
-//’PˆÊ”ŒvZŠÖ”
+//å˜ä½æ•°è¨ˆç®—é–¢æ•°
 float unitsum(const vector<lecture>& lectures, const string& category, const string& kinds) {
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
@@ -110,7 +112,7 @@ float unitsum(const vector<lecture>& lectures, const string& category, const str
 	}
 	return unitSum;
 }
-//’PˆÊ”ŒvZŠÖ”(part2)
+//å˜ä½æ•°è¨ˆç®—é–¢æ•°(part2)
 float unitsum2(const vector<lecture>& lectures, const string& category, const string& kinds, const string& lecturename) {
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
@@ -120,8 +122,8 @@ float unitsum2(const vector<lecture>& lectures, const string& category, const st
 	}
 	return unitSum;
 }
-//’PˆÊ”ŒvZŠÖ”(part3)
-float unitsum3(const vector<lecture>& lectures, const string& category, const string& kinds, const string& lecturename, const string& lecturenum) {
+//å˜ä½æ•°è¨ˆç®—é–¢æ•°(part3)
+float unitsum3(const vector<lecture>& lectures, const string& category, const string& kinds, const string& lecturename, int lecturenum) {
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
 		if (lec.category == category && lec.lecturekinds == kinds && lec.lecturename == lecturename && lec.lecturenum == lecturenum) {
@@ -131,135 +133,145 @@ float unitsum3(const vector<lecture>& lectures, const string& category, const st
 	return unitSum;
 }
 
+float unitsum4(const vector<lecture>& lectures, const string& category, const string& kinds, int lecturenum) {
+	float unitSum = 0.0;
+	for (const auto& lec : lectures) {
+		if (lec.category == category && lec.lecturekinds == kinds  && lec.lecturenum == lecturenum) {
+			unitSum += lec.unit;
+		}
+	}
+	return unitSum;
+}
 
-// æ“¾’PˆÊ”‚Æ•K—v’PˆÊ”‚ğ”äŠr‚·‚éŠÖ”(3”N)
+
+// å–å¾—å˜ä½æ•°ã¨å¿…è¦å˜ä½æ•°ã‚’æ¯”è¼ƒã™ã‚‹é–¢æ•°(3å¹´)
 void compareUnits(const Unitnum3& acquired, const Unitnum3& required) {
-	cout << "=== æ“¾’PˆÊ”‚Æ•K—v’PˆÊ”‚Ì”äŠr ===" << endl;
-	// Še—v‘f‚Ì”äŠr‚ğs‚¢AŒ‹‰Ê‚É‰‚¶‚ÄƒƒbƒZ[ƒW‚ğ•\¦‚µ‚Ü‚·
+	cout << "=== å–å¾—å˜ä½æ•°ã¨å¿…è¦å˜ä½æ•°ã®æ¯”è¼ƒ ===" << endl;
+	// å„è¦ç´ ã®æ¯”è¼ƒã‚’è¡Œã„ã€çµæœã«å¿œã˜ã¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¾ã™
 	if (acquired.unit1 >= required.unit1)
-		cout << "æ“¾’PˆÊ”1 (" << acquired.unit1 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°1 (" << acquired.unit1 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”1 (" << acquired.unit1 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit1 << endl;
+		cout << "å–å¾—å˜ä½æ•°1 (" << acquired.unit1 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit1 << endl;
 
 	if (acquired.unit2 >= required.unit2)
-		cout << "æ“¾’PˆÊ”2 (" << acquired.unit2 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°2 (" << acquired.unit2 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”2 (" << acquired.unit2 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit2 << endl;
+		cout << "å–å¾—å˜ä½æ•°2 (" << acquired.unit2 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit2 << endl;
 
-	// Še—v‘f‚Ì”äŠr‚ğ’Ç‰Á‚µ‚Ü‚·
+	// å„è¦ç´ ã®æ¯”è¼ƒã‚’è¿½åŠ ã—ã¾ã™
 	if (acquired.unit3 >= required.unit3)
-		cout << "æ“¾’PˆÊ”3 (" << acquired.unit3 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°3 (" << acquired.unit3 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”3 (" << acquired.unit3 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit3 << endl;
+		cout << "å–å¾—å˜ä½æ•°3 (" << acquired.unit3 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit3 << endl;
 
 	if (acquired.unit4 >= required.unit4)
-		cout << "æ“¾’PˆÊ”4 (" << acquired.unit4 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°4 (" << acquired.unit4 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”4 (" << acquired.unit4 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit4 << endl;
+		cout << "å–å¾—å˜ä½æ•°4 (" << acquired.unit4 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit4 << endl;
 
 	if (acquired.unit5 >= required.unit5)
-		cout << "æ“¾’PˆÊ”5 (" << acquired.unit5 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°5 (" << acquired.unit5 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”5 (" << acquired.unit5 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit5 << endl;
+		cout << "å–å¾—å˜ä½æ•°5 (" << acquired.unit5 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit5 << endl;
 
 	if (acquired.unit6 >= required.unit6)
-		cout << "æ“¾’PˆÊ”6 (" << acquired.unit6 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°6 (" << acquired.unit6 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”6 (" << acquired.unit6 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit6 << endl;
+		cout << "å–å¾—å˜ä½æ•°6 (" << acquired.unit6 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit6 << endl;
 
 	if (acquired.unit7 >= required.unit7)
-		cout << "æ“¾’PˆÊ”7 (" << acquired.unit7 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°7 (" << acquired.unit7 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”7 (" << acquired.unit7 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit7 << endl;
+		cout << "å–å¾—å˜ä½æ•°7 (" << acquired.unit7 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit7 << endl;
 
 	if (acquired.unit8 >= required.unit8)
-		cout << "æ“¾’PˆÊ”8 (" << acquired.unit8 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°8 (" << acquired.unit8 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”8 (" << acquired.unit8 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit8 << endl;
+		cout << "å–å¾—å˜ä½æ•°8 (" << acquired.unit8 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit8 << endl;
 
 	if (acquired.unit9 >= required.unit9)
-		cout << "æ“¾’PˆÊ”9 (" << acquired.unit9 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°9 (" << acquired.unit9 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”9 (" << acquired.unit9 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit9 << endl;
+		cout << "å–å¾—å˜ä½æ•°9 (" << acquired.unit9 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit9 << endl;
 
 	if (acquired.unit10 >= required.unit10)
-		cout << "æ“¾’PˆÊ”10 (" << acquired.unit10 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°10 (" << acquired.unit10 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”10 (" << acquired.unit10 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit10 << endl;
+		cout << "å–å¾—å˜ä½æ•°10 (" << acquired.unit10 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit10 << endl;
 
 	if (acquired.unit11 >= required.unit11)
-		cout << "æ“¾’PˆÊ”11 (" << acquired.unit11 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°11 (" << acquired.unit11 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”11 (" << acquired.unit11 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit11 << endl;
+		cout << "å–å¾—å˜ä½æ•°11 (" << acquired.unit11 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit11 << endl;
 
 	if (acquired.unit12 >= required.unit12)
-		cout << "æ“¾’PˆÊ”12 (" << acquired.unit12 << ") ‚Í\•ª‚Å‚·B" << endl;
+		cout << "å–å¾—å˜ä½æ•°12 (" << acquired.unit12 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 	else
-		cout << "æ“¾’PˆÊ”12 (" << acquired.unit12 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit12 << endl;
+		cout << "å–å¾—å˜ä½æ•°12 (" << acquired.unit12 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit12 << endl;
 
-	// ‚·‚×‚Ä‚Ì—v‘f‚Ì”äŠrŒ‹‰Ê‚É‰‚¶‚½•ªŠò‚ğ’Ç‰Á‚µ‚Ü‚·
+	// ã™ã¹ã¦ã®è¦ç´ ã®æ¯”è¼ƒçµæœã«å¿œã˜ãŸåˆ†å²ã‚’è¿½åŠ ã—ã¾ã™
 	if (acquired.unit1 >= required.unit1 && acquired.unit2 >= required.unit2 && acquired.unit3 >= required.unit3
 		&& acquired.unit4 >= required.unit4 && acquired.unit5 >= required.unit5 && acquired.unit6 >= required.unit6
 		&& acquired.unit7 >= required.unit7 && acquired.unit8 >= required.unit8 && acquired.unit9 >= required.unit9
 		&& acquired.unit10 >= required.unit10 && acquired.unit11 >= required.unit11 && acquired.unit12 >= required.unit12)
 	{
-		// ğŒ‚ª‚·‚×‚Ä–‚½‚³‚ê‚½ê‡‚Ìˆ—
-		cout << "•K—v’PˆÊ”‚ğ–‚½‚µ‚Ä‚¢‚Ü‚·" << endl;
+		// æ¡ä»¶ãŒã™ã¹ã¦æº€ãŸã•ã‚ŒãŸå ´åˆã®å‡¦ç†
+		cout << "å¿…è¦å˜ä½æ•°ã‚’æº€ãŸã—ã¦ã„ã¾ã™" << endl;
 	}
 	else
 	{
-		// ğŒ‚ª–‚½‚³‚ê‚È‚©‚Á‚½ê‡‚Ìˆ—
-		cout << "•K—v’PˆÊ”‚ğ–‚½‚µ‚Ä‚¢‚Ü‚¹‚ñ" << endl;
+		// æ¡ä»¶ãŒæº€ãŸã•ã‚Œãªã‹ã£ãŸå ´åˆã®å‡¦ç†
+		cout << "å¿…è¦å˜ä½æ•°ã‚’æº€ãŸã—ã¦ã„ã¾ã›ã‚“" << endl;
 	}
 }
 
 
-// æ“¾’PˆÊ”‚Æ•K—v’PˆÊ”‚ğ”äŠr‚·‚éŠÖ”(‘²‹Æ)
+// å–å¾—å˜ä½æ•°ã¨å¿…è¦å˜ä½æ•°ã‚’æ¯”è¼ƒã™ã‚‹é–¢æ•°(å’æ¥­)
 void compareUnits2(const Unitnum4& acquired, const Unitnum4& required) {
-cout << "=== æ“¾’PˆÊ”‚Æ•K—v’PˆÊ”‚Ì”äŠr ===" << endl;
-// Še—v‘f‚Ì”äŠr‚ğs‚¢AŒ‹‰Ê‚É‰‚¶‚ÄƒƒbƒZ[ƒW‚ğ•\¦‚µ‚Ü‚·
+cout << "=== å–å¾—å˜ä½æ•°ã¨å¿…è¦å˜ä½æ•°ã®æ¯”è¼ƒ ===" << endl;
+// å„è¦ç´ ã®æ¯”è¼ƒã‚’è¡Œã„ã€çµæœã«å¿œã˜ã¦ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã‚’è¡¨ç¤ºã—ã¾ã™
 if (acquired.unit1 >= required.unit1)
-cout << "æ“¾’PˆÊ”1 (" << acquired.unit1 << ") ‚Í\•ª‚Å‚·B" << endl;
+cout << "å–å¾—å˜ä½æ•°1 (" << acquired.unit1 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 else
-cout << "æ“¾’PˆÊ”1 (" << acquired.unit1 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit1 << endl;
+cout << "å–å¾—å˜ä½æ•°1 (" << acquired.unit1 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit1 << endl;
 
 if (acquired.unit2 >= required.unit2)
-cout << "æ“¾’PˆÊ”2 (" << acquired.unit2 << ") ‚Í\•ª‚Å‚·B" << endl;
+cout << "å–å¾—å˜ä½æ•°2 (" << acquired.unit2 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 else
-cout << "æ“¾’PˆÊ”2 (" << acquired.unit2 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit2 << endl;
+cout << "å–å¾—å˜ä½æ•°2 (" << acquired.unit2 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit2 << endl;
 
-// Še—v‘f‚Ì”äŠr‚ğ’Ç‰Á‚µ‚Ü‚·
+// å„è¦ç´ ã®æ¯”è¼ƒã‚’è¿½åŠ ã—ã¾ã™
 if (acquired.unit3 >= required.unit3)
-cout << "æ“¾’PˆÊ”3 (" << acquired.unit3 << ") ‚Í\•ª‚Å‚·B" << endl;
+cout << "å–å¾—å˜ä½æ•°3 (" << acquired.unit3 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 else
-cout << "æ“¾’PˆÊ”3 (" << acquired.unit3 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit3 << endl;
+cout << "å–å¾—å˜ä½æ•°3 (" << acquired.unit3 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit3 << endl;
 
 if (acquired.unit4 >= required.unit4)
-cout << "æ“¾’PˆÊ”4 (" << acquired.unit4 << ") ‚Í\•ª‚Å‚·B" << endl;
+cout << "å–å¾—å˜ä½æ•°4 (" << acquired.unit4 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 else
-cout << "æ“¾’PˆÊ”4 (" << acquired.unit4 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit4 << endl;
+cout << "å–å¾—å˜ä½æ•°4 (" << acquired.unit4 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit4 << endl;
 
 if (acquired.unit5 >= required.unit5)
-cout << "æ“¾’PˆÊ”5 (" << acquired.unit5 << ") ‚Í\•ª‚Å‚·B" << endl;
+cout << "å–å¾—å˜ä½æ•°5 (" << acquired.unit5 << ") ã¯ååˆ†ã§ã™ã€‚" << endl;
 else
-cout << "æ“¾’PˆÊ”5 (" << acquired.unit5 << ") ‚ª•s‘«‚µ‚Ä‚¢‚Ü‚·B•K—v‚È’PˆÊ”: " << required.unit5 << endl;
+cout << "å–å¾—å˜ä½æ•°5 (" << acquired.unit5 << ") ãŒä¸è¶³ã—ã¦ã„ã¾ã™ã€‚å¿…è¦ãªå˜ä½æ•°: " << required.unit5 << endl;
 
 
-// ‚·‚×‚Ä‚Ì—v‘f‚Ì”äŠrŒ‹‰Ê‚É‰‚¶‚½•ªŠò‚ğ’Ç‰Á‚µ‚Ü‚·
+// ã™ã¹ã¦ã®è¦ç´ ã®æ¯”è¼ƒçµæœã«å¿œã˜ãŸåˆ†å²ã‚’è¿½åŠ ã—ã¾ã™
 if (acquired.unit1 >= required.unit1 && acquired.unit2 >= required.unit2 && acquired.unit3 >= required.unit3
 	&& acquired.unit4 >= required.unit4 && acquired.unit5 >= required.unit5 )
 {
-	// ğŒ‚ª‚·‚×‚Ä–‚½‚³‚ê‚½ê‡‚Ìˆ—
-	cout << "•K—v’PˆÊ”‚ğ–‚½‚µ‚Ä‚¢‚Ü‚·" << endl;
+	// æ¡ä»¶ãŒã™ã¹ã¦æº€ãŸã•ã‚ŒãŸå ´åˆã®å‡¦ç†
+	cout << "å¿…è¦å˜ä½æ•°ã‚’æº€ãŸã—ã¦ã„ã¾ã™" << endl;
 }
 else
 {
-	// ğŒ‚ª–‚½‚³‚ê‚È‚©‚Á‚½ê‡‚Ìˆ—
-	cout << "•K—v’PˆÊ”‚ğ–‚½‚µ‚Ä‚¢‚Ü‚¹‚ñ" << endl;
+	// æ¡ä»¶ãŒæº€ãŸã•ã‚Œãªã‹ã£ãŸå ´åˆã®å‡¦ç†
+	cout << "å¿…è¦å˜ä½æ•°ã‚’æº€ãŸã—ã¦ã„ã¾ã›ã‚“" << endl;
 }
 }
 
-//gpa ŒvZŠÖ”
+//gpa è¨ˆç®—é–¢æ•°
 float calculateGPA(const vector<lecture>& lectures) {
 	float totalGradePoints = 0.0;
 	float totalUnits = 0.0;
@@ -278,322 +290,345 @@ float calculateGPA(const vector<lecture>& lectures) {
 }
 
 
-
-
-//ƒƒCƒ“ŠÖ”
+//ãƒ¡ã‚¤ãƒ³é–¢æ•°
 int main() {
-	//ƒƒbƒZ[ƒW‚Ì•\¦i‘€ì‚Ìè‡‚Ìà–¾j
-	cout << "`g‚¢•û`" << endl;
-	cout << "CAMPUSSQUARE‚ÉƒƒOƒCƒ“ -> ¬Ñ -> ‰ß‹‚ğŠÜ‚ß‚½‘S¬Ñ‚ğ‘I‘ğ -> ‰æ–Ê‚É•\¦‚·‚é‚ğƒNƒŠƒbƒN@‚Ìè‡‚Å¬Ñ‚ğ•\¦‚µCNo.1‚©‚çÅŒã‚Ü‚ÅC•\‚Ì‚·‚×‚Ä‚Ì€–Ú‚ğƒRƒs[‚µ‚½‚à‚Ì‚ğˆÈ‰º‚É“\‚è•t‚¯‚Ä‚­‚¾‚³‚¢" << endl;
-	cout << "`’ˆÓ–€`" << endl;
-	cout << "ƒeƒLƒXƒg“\‚è•t‚¯CŒx‚ªo‚é‚±‚Æ‚ª‚ ‚è‚Ü‚·‚ªCu‹­§“I‚É“\‚è•t‚¯v‚ğƒNƒŠƒbƒN‚µ‚Ä–â‘è‚È‚¢‚Å‚·D" << endl << endl;
+	//ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸ã®è¡¨ç¤ºï¼ˆæ“ä½œã®æ‰‹é †ã®èª¬æ˜ï¼‰
+	cout << "ï½ä½¿ã„æ–¹ï½" << endl;
+	cout << "CAMPUSSQUAREã«ãƒ­ã‚°ã‚¤ãƒ³ -> æˆç¸¾ -> éå»ã‚’å«ã‚ãŸå…¨æˆç¸¾ã‚’é¸æŠ -> ç”»é¢ã«è¡¨ç¤ºã™ã‚‹ã‚’ã‚¯ãƒªãƒƒã‚¯ã€€ã®æ‰‹é †ã§æˆç¸¾ã‚’è¡¨ç¤ºã—ï¼ŒNo.1ã‹ã‚‰æœ€å¾Œã¾ã§ï¼Œè¡¨ã®ã™ã¹ã¦ã®é …ç›®ã‚’ã‚³ãƒ”ãƒ¼ã—ãŸã‚‚ã®ã‚’ä»¥ä¸‹ã«è²¼ã‚Šä»˜ã‘ã¦ãã ã•ã„" << endl;
+	cout << "ï½æ³¨æ„äº‹é …ï½" << endl;
+	cout << "ãƒ†ã‚­ã‚¹ãƒˆè²¼ã‚Šä»˜ã‘æ™‚ï¼Œè­¦å‘ŠãŒå‡ºã‚‹ã“ã¨ãŒã‚ã‚Šã¾ã™ãŒï¼Œã€Œå¼·åˆ¶çš„ã«è²¼ã‚Šä»˜ã‘ã€ã‚’ã‚¯ãƒªãƒƒã‚¯ã—ã¦å•é¡Œãªã„ã§ã™ï¼" << endl << endl;
 	
-	//ƒR[ƒX‚ğq‚Ë‚é
-	cout << "‚ ‚È‚½‚ÌŠ‘®ƒR[ƒX‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢i’m”\‹@ŠBƒR[ƒX: 1, ¶‘Ì‹@ŠBƒR[ƒX: 2j: ";
+	//ã‚³ãƒ¼ã‚¹ã‚’å°‹ã­ã‚‹
+	cout << "ã‚ãªãŸã®æ‰€å±ã‚³ãƒ¼ã‚¹ã‚’é¸æŠã—ã¦ãã ã•ã„ï¼ˆçŸ¥èƒ½æ©Ÿæ¢°ã‚³ãƒ¼ã‚¹: 1, ç”Ÿä½“æ©Ÿæ¢°ã‚³ãƒ¼ã‚¹: 2ï¼‰: ";
 	int courseSelection;
 	cin >> courseSelection;
-	cout << "‘I‘ğ‚³‚ê‚½ƒR[ƒX: " << courseSelection << endl;
 
 
-	/*“ü—ÍƒeƒLƒXƒg‚Ìƒtƒ@ƒCƒ‹‚Ì•Û‘¶*/
+	cout << "é¸æŠã•ã‚ŒãŸã‚³ãƒ¼ã‚¹: " << courseSelection << endl;
+
+
+	//å°‚é–€ç§‘ç›®ç¾¤ä»¥å¤–ã«å˜ä½ã‚’å–ã£ã¦ã„ã‚‹ã‹ã‚’å°‹ã­ã‚‹ï¼ˆæœªå®Ÿè£…ï¼‰
+
+
+	/*å…¥åŠ›ãƒ†ã‚­ã‚¹ãƒˆã®ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜*/
 	ofstream outfile("seiseki.txt");
-	//ƒtƒ@ƒCƒ‹“ü—Í¸”s‚ÌƒƒbƒZ[ƒW
+	//ãƒ•ã‚¡ã‚¤ãƒ«å…¥åŠ›å¤±æ•—æ™‚ã®ãƒ¡ãƒƒã‚»ãƒ¼ã‚¸
 	if (!outfile) {
-		cout << "ƒtƒ@ƒCƒ‹‚Ìì¬‚É¸”s‚µ‚Ü‚µ‚½B" << endl;
+		cout << "ãƒ•ã‚¡ã‚¤ãƒ«ã®ä½œæˆã«å¤±æ•—ã—ã¾ã—ãŸã€‚" << endl;
 		return 1;
 	}
 
-	cout << "ˆÈ‰º‚Éw’è‚µ‚½ƒeƒLƒXƒg‚ğ“ü—Í‚µ‚Ä‚­‚¾‚³‚¢iI—¹‚·‚é‚É‚Í‰üsŒãCCtrl+Z‚ğ‰Ÿ‚µ‚Ä‚©‚çenter‚ğ‰Ÿ‚µ‚Ä‚­‚¾‚³‚¢j:" << endl;
+	cout << "ä»¥ä¸‹ã«æŒ‡å®šã—ãŸãƒ†ã‚­ã‚¹ãƒˆã‚’å…¥åŠ›ã—ã¦ãã ã•ã„ï¼ˆçµ‚äº†ã™ã‚‹ã«ã¯æ”¹è¡Œå¾Œï¼ŒCtrl+Zã‚’æŠ¼ã—ã¦ã‹ã‚‰enterã‚’æŠ¼ã—ã¦ãã ã•ã„ï¼‰:" << endl;
 	string line2;
-	//Še—ñ‚²‚Æ‚Éƒtƒ@ƒCƒ‹•Û‘¶
+	//å„åˆ—ã”ã¨ã«ãƒ•ã‚¡ã‚¤ãƒ«ä¿å­˜
 	while (getline(cin, line2)) {
 		outfile << line2 << endl;
 	}
 	outfile.close();
-	cout << "ƒtƒ@ƒCƒ‹‚Ì•Û‘¶‚ªŠ®—¹‚µ‚Ü‚µ‚½B" << endl;
+	cout << "ãƒ•ã‚¡ã‚¤ãƒ«ã®ä¿å­˜ãŒå®Œäº†ã—ã¾ã—ãŸã€‚" << endl;
 
 
-	/*“ü—Í‚µ‚Ä‚à‚ç‚Á‚½txtƒtƒ@ƒCƒ‹‚Ì“Ç‚İ‚İ*/
+	/*å…¥åŠ›ã—ã¦ã‚‚ã‚‰ã£ãŸtxtãƒ•ã‚¡ã‚¤ãƒ«ã®èª­ã¿è¾¼ã¿*/
 	ifstream infile("seiseki.txt");
-	vector<lecture>lectures;//lectureŒ^‚Ìvectori–¼‘O‚Ílecturesj
+	vector<lecture>lectures;//lectureå‹ã®vectorï¼ˆåå‰ã¯lecturesï¼‰
 	string line;
 	vector<string> elements;
-	string nowcategory; // Œ»İ‚Ì‰È–ÚŒQ
-	string nowkinds;// Œ»İ‚Ì‰È–Úí—Ş
-
-	//infile.imbue(locale("ja_JP.UTF-8")); // ƒƒP[ƒ‹‚Æ•¶šƒZƒbƒg‚ğİ’è
+	string nowcategory; // ç¾åœ¨ã®ç§‘ç›®ç¾¤
+	string nowkinds;// ç¾åœ¨ã®ç§‘ç›®ç¨®é¡
 
 	while (getline(infile, line)) {
 
-		splitString(line, elements);//ŠÖ”‚Ì—˜—p
+		splitString(line, elements);//é–¢æ•°ã®åˆ©ç”¨
 
-		//11‚Â‚É•ª‚©‚ê‚é‚Æ‚«()
+		//11ã¤ã«åˆ†ã‹ã‚Œã‚‹ã¨ã
 		if (elements.size() == 11) {
 			string category = elements[1];
 			string kinds = elements[2];
 			string num = elements[3];
 			string name = elements[4];
-			float unit = stof(elements[6]);//•¶š—ñ‚ğfloat‚É•ÏŠ·
+			float unit = stof(elements[6]);//æ–‡å­—åˆ—ã‚’floatã«å¤‰æ›
 			string grade = elements[9];
-			int value = convertGradeToValue(grade);
+			int value = convertGradeToValue(grade);//å¤‰æ›é–¢æ•°
 			int year = stoi(elements[7]);
-			lecture lec(category, kinds, num, name, unit, value, year);
+
+			// numã‚’1æ–‡å­—ç›®ã¨2æ–‡å­—ç›®ä»¥é™ã«åˆ†å‰²ã—ã¦ä¿å­˜
+			string alphaPart = num.substr(0, 1);
+			int numericPart = stoi(num.substr(1));
+
+			lecture lec(category, kinds, numericPart, name, unit, value, year);
 			lectures.push_back(lec);
 		}
-		//12‚Â‚É•ª‚©‚ê‚é‚Æ‚«ij
+		//12ã¤ã«åˆ†ã‹ã‚Œã‚‹ã¨ã
 		if (elements.size() == 12) {
 			string category = elements[1];
 			string kinds = elements[2];
 			string num = elements[4];
 			string name = elements[5];
-			float unit = stof(elements[7]);//•¶š—ñ‚ğfloat‚É•ÏŠ·
+			float unit = stof(elements[7]);//æ–‡å­—åˆ—ã‚’floatã«å¤‰æ›
 			string grade = elements[10];
 			int value = convertGradeToValue(grade);
 			int year = stoi(elements[8]);
-			lecture lec(category, kinds, num, name, unit, value, year);
+
+			// numã‚’1æ–‡å­—ç›®ã¨2æ–‡å­—ç›®ä»¥é™ã«åˆ†å‰²ã—ã¦ä¿å­˜
+			string alphaPart = num.substr(0, 1);
+			int numericPart = stoi(num.substr(1));
+
+			lecture lec(category, kinds, numericPart, name, unit, value, year);
 			lectures.push_back(lec);
 		}
 		elements.clear();
 	}
 	infile.close();
-	cout << "ƒtƒ@ƒCƒ‹‚ªŠm”F‚Å‚«‚Ü‚µ‚½" << endl;
+	cout << "ãƒ•ã‚¡ã‚¤ãƒ«ãŒç¢ºèªã§ãã¾ã—ãŸ" << endl;
 
-	////ƒR[ƒX‚ğq‚Ë‚é
-	//cout << "‚ ‚È‚½‚ÌŠ‘®ƒR[ƒX‚ğ‘I‘ğ‚µ‚Ä‚­‚¾‚³‚¢i’m”\‹@ŠBƒR[ƒX: 1, ¶‘Ì‹@ŠBƒR[ƒX: 2j: ";
-	//int courseSelection;
-	//cin >> courseSelection;
-
-	//Še‹æ•ª‚¯‚É’u‚¯‚é’PˆÊ”‚ÌŒvZiO”Ni‹‰—vŒjiƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”j
+	//å„åŒºåˆ†ã‘ã«ç½®ã‘ã‚‹å˜ä½æ•°ã®è¨ˆç®—ï¼ˆä¸‰å¹´é€²ç´šè¦ä»¶ï¼‰ï¼ˆã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨ï¼‰
 	vector<Unitnum3>num3;
-	float u1_1 = unitsum(lectures, "‹³—{‰È–Ú", "“ssEĞ‰ïEŠÂ‹«");
-	float u1_2 = unitsum(lectures, "‹³—{‰È–Ú", "‰ÈŠwE‹ZpEY‹Æ");
-	float u1_3 = unitsum(lectures, "Šî”Õ‰È–Ú", "Ğ‰ï‰ÈŠw—Ìˆæ");
-	float u1_4 = unitsum(lectures, "Šî”Õ‰È–Ú", "©‘R‰ÈŠw—Ìˆæ");
-	float u1_5 = unitsum(lectures, "Šî‘b‰È–Ú", "ƒLƒƒƒŠƒA‹³ˆç");
+	float u1_1 = unitsum(lectures, "æ•™é¤Šç§‘ç›®", "éƒ½å¸‚ãƒ»ç¤¾ä¼šãƒ»ç’°å¢ƒ");
+	float u1_2 = unitsum(lectures, "æ•™é¤Šç§‘ç›®", "ç§‘å­¦ãƒ»æŠ€è¡“ãƒ»ç”£æ¥­");
+	float u1_3 = unitsum(lectures, "åŸºç›¤ç§‘ç›®", "ç¤¾ä¼šç§‘å­¦é ˜åŸŸ");
+	float u1_4 = unitsum(lectures, "åŸºç›¤ç§‘ç›®", "è‡ªç„¶ç§‘å­¦é ˜åŸŸ");
+	float u1_5 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "ã‚­ãƒ£ãƒªã‚¢æ•™è‚²");
 
 	float u1 = u1_1+ u1_2 + u1_3 + u1_4 + u1_5 ;
-	float u2 = unitsum(lectures, "Šî‘b‰È–Ú", "Šî‘bƒ[ƒ~ƒi[ƒ‹");
-	float u3 = unitsum(lectures, "Šî‘b‰È–Ú", "î•ñ‰È–Ú");
-	float u4 = unitsum(lectures, "Šî‘b‰È–Ú", "À‘H‰pŒê");
-	float u5 = unitsum(lectures, "Šî‘b‰È–Ú", "—Œn‹¤’ÊŠî‘b‰È–Ú");
+	float u2 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "åŸºç¤ã‚¼ãƒŸãƒŠãƒ¼ãƒ«");
+	float u3 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "æƒ…å ±ç§‘ç›®");
+	float u4 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "å®Ÿè·µè‹±èª");
+	float u5 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "ç†ç³»å…±é€šåŸºç¤ç§‘ç›®"); 
 
-	//ƒR[ƒX‹¤’ÊŠî‘b‰È–Úi•KCj
-	float u6_1 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "H‹Æ—ÍŠw");
-	float u6_2 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Ş—¿—ÍŠw", "L0406");//Ş—¿—ÍŠw‡T
-	float u6_3 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠB»}", "L0413");//‹@ŠB»}‡T
-	float u6_4 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "H‹Æ”Šw");
-	float u6_5 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@\Šw");
-	float u6_6 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠB»}", "L0422");//‹@ŠB»}‡U
-	float u6_7 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBƒVƒXƒeƒ€Šî‘bÀŒ±");
-	float u6_8 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBHìÀK");
+	//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ç§‘ç›®ï¼ˆå¿…ä¿®ï¼‰
+	float u6_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å·¥æ¥­åŠ›å­¦");
+	float u6_2 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",417);//ææ–™åŠ›å­¦â… 
+	float u6_3 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",413);//æ©Ÿæ¢°è£½å›³â… 
+	float u6_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å·¥æ¥­æ•°å­¦");
+	float u6_5 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ§‹å­¦");
+	float u6_6 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 422);//æ©Ÿæ¢°è£½å›³â…¡
+	float u6_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ¢°ã‚·ã‚¹ãƒ†ãƒ åŸºç¤å®Ÿé¨“");
+	float u6_8 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ¢°å·¥ä½œå®Ÿç¿’");
 
 	float u6 = u6_1 + u6_2 + u6_3 + u6_4 + u6_5 + u6_6 + u6_7 + u6_8;
 
-	//ƒR[ƒX‹¤’ÊŠî‘b‰È–Úi‘I‘ğj
-	float u7_1 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Œv‘ªHŠw");
-	float u7_2 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K", "L0407");//ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K‡T
-	float u7_3 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Šî‘b“d‹C‰ñ˜H");
-	float u7_4 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒƒJƒgƒƒjƒNƒX@(Mechatronics)");
-	float u7_5 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠB—ÍŠw", "L0416");//‹@ŠB—ÍŠw‡T
-	float u7_6 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "—¬‘Ì—ÍŠw", "L0417");//—¬‘Ì—ÍŠw‡T
-	float u7_7 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "”M—ÍŠw");
-	float u7_8 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€§Œä", "L0426");//ƒVƒXƒeƒ€§Œä‡T
-	float u7_9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "“dq‰ñ˜H");
+	//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ç§‘ç›®ï¼ˆé¸æŠï¼‰
+	float u7_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "è¨ˆæ¸¬å·¥å­¦");
+	float u7_2 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 407);//ãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°æ¼”ç¿’â… 
+	float u7_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "åŸºç¤é›»æ°—å›è·¯");
+	float u7_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒ¡ã‚«ãƒˆãƒ­ãƒ‹ã‚¯ã‚¹@(Mechatronics)");
+	float u7_5 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 416);//æ©Ÿæ¢°åŠ›å­¦â… 
+	float u7_6 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 417);//æµä½“åŠ›å­¦â… 
+	float u7_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç†±åŠ›å­¦");
+	float u7_8 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 426);//ã‚·ã‚¹ãƒ†ãƒ åˆ¶å¾¡â… 
+	float u7_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "é›»å­å›è·¯");
 	float u7 = u7_1 + u7_2 + u7_3 + u7_4 + u7_5 + u7_6 + u7_7 + u7_8 + u7_9;
 
-	//ƒR[ƒX‹¤’Êê–å‰È–ÚCƒR[ƒXê–å‰È–Ú
-	//ƒR[ƒX‹¤’Êê–å‰È–Ú
-	float u8_1_1 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Ş—¿—ÍŠw","L0419");//Ş—¿—ÍŠw‡U
-	float u8_1_2 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠB—ÍŠw", "L0428");//‹@ŠB—ÍŠw‡U
-	float u8_1_3 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "—¬‘Ì—ÍŠw", "L0429");//—¬‘Ì—ÍŠw‡U
-	float u8_1_4 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "”MHŠw");
-	float u8_1_5 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠB—v‘f");
-	float u8_1_6 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Šî‘b‰ÁHŠw");
-	float u8_1_7 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBŞ—¿Šw");
-	float u8_1_8 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBHŠw‰‰K", "L0437");//‹@ŠBHŠw‰‰K‡T
-	float u8_1_9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBƒVƒXƒeƒ€æ’[u‹`");
-	float u8_1_10 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‰—p‰ÁHŠw");
-	float u8_1_11 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒ}ƒCƒNƒEƒiƒmHŠw");
-	float u8_1_12 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‹@ŠBHŠw‰‰K", "L0456");//‹@ŠBHŠw‰‰K‡U
-	float u8_1_13 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒCƒ“ƒ^[ƒ“ƒVƒbƒv");
-	float u8_1_14 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "HêŒ©Šw");
+	//ã‚³ãƒ¼ã‚¹å…±é€šå°‚é–€ç§‘ç›®ï¼Œã‚³ãƒ¼ã‚¹å°‚é–€ç§‘ç›®
+	//ã‚³ãƒ¼ã‚¹å…±é€šå°‚é–€ç§‘ç›®
+	float u8_1_1 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 419);//ææ–™åŠ›å­¦â…¡
+	float u8_1_2 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 428);//æ©Ÿæ¢°åŠ›å­¦â…¡
+	float u8_1_3 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 429);//æµä½“åŠ›å­¦â…¡
+	float u8_1_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç†±å·¥å­¦");
+	float u8_1_5 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ¢°è¦ç´ ");
+	float u8_1_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "åŸºç¤åŠ å·¥å­¦");
+	float u8_1_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ¢°ææ–™å­¦");
+	float u8_1_8 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 437);//æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â… 
+	float u8_1_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ©Ÿæ¢°ã‚·ã‚¹ãƒ†ãƒ å…ˆç«¯è¬›ç¾©");
+	float u8_1_10 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å¿œç”¨åŠ å·¥å­¦");
+	float u8_1_11 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒã‚¤ã‚¯ãƒ­ãƒ»ãƒŠãƒå·¥å­¦");
+	float u8_1_12 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",456);//æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â…¡
+	float u8_1_13 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚¤ãƒ³ã‚¿ãƒ¼ãƒ³ã‚·ãƒƒãƒ—");
+	float u8_1_14 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å·¥å ´è¦‹å­¦");
 
 	float u8_1 = u8_1_1 + u8_1_2 + u8_1_3 + u8_1_4 + u8_1_5 + u8_1_6 + u8_1_7 + u8_1_8 + u8_1_9 + u8_1_10 + u8_1_11+ u8_1_12 + u8_1_13 + u8_1_14;
-	//ƒR[ƒXê–å‰È–Ú
-	float u8_2 = 0;
-	if (courseSelection == 1) {//’m”\
-		float u8_2_0 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠB‰—pÀŒ±");
-		float u8_2_1 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠBŠT˜_");
-		float u8_2_2 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€‰ğÍ");
-		float u8_2_3 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒƒ{ƒbƒg‰^“®Šw");
-		float u8_2_4 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\ƒƒ{ƒbƒg");
-		float u8_2_5 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K","L0441"); //‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K‡T
-		float u8_2_6 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€HŠw");
-		float u8_2_7 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Šî‘bİŒvHŠw");
-		float u8_2_8 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€§Œä","L0444");//ƒVƒXƒeƒ€§Œä‡U
-		float u8_2_9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€§Œä‰‰K");
-		float u8_2_10 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K","L0446");//ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K‡U
-		float u8_2_11 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠBƒ[ƒ~ƒi[ƒ‹");
-		float u8_2_12 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‘g‚İƒVƒXƒeƒ€");
-		float u8_2_13 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒƒ{ƒbƒgƒZƒ“ƒVƒ“ƒO");
-		float u8_2_14 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‰—pİŒvHŠw");
-		float u8_2_15 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€HŠw‰‰K");
-		float u8_2_16 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠB“Á•ÊŒ¤‹†");
-		float u8_2_17 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K", "L0471");//‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K‡U
+	
+	//ã‚³ãƒ¼ã‚¹å°‚é–€ç§‘ç›®
+	float u8_2 ; 
+	if (courseSelection == 1) {//çŸ¥èƒ½
+		float u8_2_0 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
+		float u8_2_1 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 410);
+		float u8_2_2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ è§£æ");
+		float u8_2_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒ­ãƒœãƒƒãƒˆé‹å‹•å­¦");
+		float u8_2_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½ãƒ­ãƒœãƒƒãƒˆ");
+		float u8_2_5 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 441); //å‰µé€ çš„ãƒ­ãƒœãƒ†ã‚£ã‚¯ã‚¹æ¼”ç¿’â… 
+		float u8_2_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ å·¥å­¦");
+		float u8_2_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "åŸºç¤è¨­è¨ˆå·¥å­¦");
+		float u8_2_8 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 444);//ã‚·ã‚¹ãƒ†ãƒ åˆ¶å¾¡â…¡
+		float u8_2_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ åˆ¶å¾¡æ¼”ç¿’");
+		float u8_2_10 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 446);//ãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°æ¼”ç¿’â…¡
+		float u8_2_11 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°ã‚¼ãƒŸãƒŠãƒ¼ãƒ«");
+		float u8_2_12 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çµ„è¾¼ã¿ã‚·ã‚¹ãƒ†ãƒ ");
+		float u8_2_13 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒ­ãƒœãƒƒãƒˆã‚»ãƒ³ã‚·ãƒ³ã‚°");
+		float u8_2_14 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å¿œç”¨è¨­è¨ˆå·¥å­¦");
+		float u8_2_15 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ å·¥å­¦æ¼”ç¿’");
+		float u8_2_16 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
+		float u8_2_17 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 471);//å‰µé€ çš„ãƒ­ãƒœãƒ†ã‚£ã‚¯ã‚¹æ¼”ç¿’â…¡
 
 		u8_2 = u8_2_0 + u8_2_1 + u8_2_2 + u8_2_3 + u8_2_4 + u8_2_5 + u8_2_6 + u8_2_7 + u8_2_8 + u8_2_9 + u8_2_10 + u8_2_11 + u8_2_12 + u8_2_13 + u8_2_14 + u8_2_15 + u8_2_16 + u8_2_17;
 	}
-	else if (courseSelection == 2) {//¶‘Ì
-		float u8_2_0 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠB‰—pÀŒ±");
-		float u8_2_1 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBŠT˜_");
-		float u8_2_2 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì¶—HŠw");
-		float u8_2_3 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì“ŒvŠw");
-		float u8_2_4 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒoƒCƒIƒƒJƒjƒNƒX");
-		float u8_2_5 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶——¬‘ÌHŠw");
-		float u8_2_6 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "•Ÿƒ‹@ŠíHŠw"); 
-		float u8_2_7 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘ÌŒv‘ªHŠw");
-		float u8_2_8 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒGƒlƒ‹ƒM[•ÏŠ·HŠw");
-		float u8_2_9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘ÌŞ—¿‹­“xHŠw");
-		float u8_2_10 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBHŠw‰‰K","L0453");//¶‘Ì‹@ŠBHŠw‰‰K‡T
-		float u8_2_11 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBƒ[ƒ~ƒi[ƒ‹");
-		float u8_2_12 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Ä¶ˆãHŠw");
-		float u8_2_13 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "lŠÔHŠw");
-		float u8_2_14 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "”’l‰ğÍ–@");
-		float u8_2_15 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBHŠw‰‰K","L0466");//¶‘Ì‹@ŠBHŠw‰‰K‡U
-		float u8_2_16 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠB“Á•ÊŒ¤‹†");
-		float u8_2_17 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶–½—˜_");
+	else if (courseSelection == 2) {//ç”Ÿä½“
+		float u8_2_0 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
+		float u8_2_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°æ¦‚è«–");
+		float u8_2_2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“ç”Ÿç†å·¥å­¦");
+		float u8_2_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“çµ±è¨ˆå­¦");
+		float u8_2_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒã‚¤ã‚ªãƒ¡ã‚«ãƒ‹ã‚¯ã‚¹");
+		float u8_2_5 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿç†æµä½“å·¥å­¦");
+		float u8_2_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç¦ç¥‰æ©Ÿå™¨å·¥å­¦"); 
+		float u8_2_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“è¨ˆæ¸¬å·¥å­¦");
+		float u8_2_8 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚¨ãƒãƒ«ã‚®ãƒ¼å¤‰æ›å·¥å­¦");
+		float u8_2_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“ææ–™å¼·åº¦å·¥å­¦");
+		float u8_2_10 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 453);//ç”Ÿä½“æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â… 
+		float u8_2_11 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°ã‚¼ãƒŸãƒŠãƒ¼ãƒ«");
+		float u8_2_12 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å†ç”ŸåŒ»å·¥å­¦");
+		float u8_2_13 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "äººé–“å·¥å­¦");
+		float u8_2_14 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ•°å€¤è§£ææ³•");
+		float u8_2_15 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 466);//ç”Ÿä½“æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â…¡
+		float u8_2_16 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
+		float u8_2_17 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿå‘½ç†è«–");
 
 		u8_2 = u8_2_0 + u8_2_1 + u8_2_2 + u8_2_3 + u8_2_4 + u8_2_5 + u8_2_6 + u8_2_7 + u8_2_8 + u8_2_9 + u8_2_10 + u8_2_11 + u8_2_12 + u8_2_13 + u8_2_14 + u8_2_15 + u8_2_16 + u8_2_17;
 	}
 	else {
-		u8_2 = 0;
+		cout << "ç„¡åŠ¹ãªé¸æŠã§ã™ã€‚çµ‚äº†ã—ã¾ã™ã€‚" << endl;
+		return 1;
 	}
-	float u8 = u8_1+u8_2;
 
-	//’m”\E¶‘Ì‹@ŠB‰—pÀŒ±
+	 float u8 = u8_1 + u8_2;
+
+	//çŸ¥èƒ½ãƒ»ç”Ÿä½“æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“
 	float u9 = 0;
 	if (courseSelection == 1) {
-		u9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠB‰—pÀŒ±");
+		u9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
 	}
 	else if (courseSelection == 2) {
-		u9 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠB‰—pÀŒ±");
-	}
-	else {
-		u9 = 0;
+		u9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
 	}
 
-	//ê–å‹³ˆç‰È–ÚŒQ
-	//Šw•”‹¤’Ê‰È–Ú
-	float u1001 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "î•ñ‚ÆE‹Æ");
-	float u1002 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‰ÈŠw‹Zp‰pŒê‘æˆê");
-	float u1003 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‰ÈŠw‹Zp‰pŒê‘æ“ñ");
-	float u1004 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“˜_");
-	float u1005 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Œo‰cHŠwŠT˜_");
-	float u1006 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "HŠw—Ï—");
-	float u1007 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Y‹Æ‚Æ–@‹K");
-	float u100 = u1001 + u1002 + u1003 + u1004 + u1005 + u1006 + u1007;
+	//å°‚é–€æ•™è‚²ç§‘ç›®ç¾¤
+	//å­¦éƒ¨å…±é€šç§‘ç›®
+	float u10_1_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æƒ…å ±ã¨è·æ¥­");
+	float u10_1_2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç§‘å­¦æŠ€è¡“è‹±èªç¬¬ä¸€");
+	float u10_1_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç§‘å­¦æŠ€è¡“è‹±èªç¬¬äºŒ");
+	float u10_1_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³è«–");
+	float u10_1_5 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çµŒå–¶å·¥å­¦æ¦‚è«–");
+	float u10_1_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å·¥å­¦å€«ç†");
+	float u10_1_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”£æ¥­ã¨æ³•è¦");
+	float u10_1 = u10_1_1 + u10_1_2 + u10_1_3 + u10_1_4 + u10_1_5 + u10_1_6 + u10_1_7;
 
-	float u101 = 0;
-	if (courseSelection == 2) {//¶‘Ì
-		float u820 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠB‰—pÀŒ±");
-		float u821 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠBŠT˜_");
-		float u822 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€‰ğÍ");
-		float u823 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒƒ{ƒbƒg‰^“®Šw");
-		float u824 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\ƒƒ{ƒbƒg");
-		float u825 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K", "L0441"); //‘n‘¢“Iƒƒ{ƒeƒBƒNƒX‰‰K‡T
-		float u826 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€HŠw");
-		float u827 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "Šî‘bİŒvHŠw");
-		float u828 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€§Œä", "L0444");//ƒVƒXƒeƒ€§Œä‡U
-		float u829 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒVƒXƒeƒ€§Œä‰‰K");
-		float u8210 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K", "L0446");//ƒvƒƒOƒ‰ƒ~ƒ“ƒO‰‰K‡U
-		u101 = u820 + u821 + u822 + u823 + u824 + u825 + u826 + u827 + u828 + u829 + u8210;
-	}
-	else if (courseSelection == 1) {//’m”\
-		float u820 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠB‰—pÀŒ±");
-		float u821 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBŠT˜_");
-		float u822 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì¶—HŠw");
-		float u823 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì“ŒvŠw");
-		float u824 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒoƒCƒIƒƒJƒjƒNƒX");
-		float u825 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶——¬‘ÌHŠw");
-		float u826 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "•Ÿƒ‹@ŠíHŠw");
-		float u827 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘ÌŒv‘ªHŠw");
-		float u828 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "ƒGƒlƒ‹ƒM[•ÏŠ·HŠw");
-		float u829 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘ÌŞ—¿‹­“xHŠw");
-		float u8210 = unitsum3(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠBHŠw‰‰K", "L0453");//¶‘Ì‹@ŠBHŠw‰‰K‡T
-		u101 = u820 + u821 + u822 + u823 + u824 + u825 + u826 + u827 + u828 + u829 +u8210;
-	}
-	else {
-		u101 = 0;
-	}
-	float u10 = u6 + u7 + u8 + u100+ u101;
+	float u10_2;
+	if (courseSelection == 2) {//ç”Ÿä½“
+		float u10_2_0 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
+		float u10_2_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°æ¦‚è«–");
+		float u10_2_2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ è§£æ");
+		float u10_2_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒ­ãƒœãƒƒãƒˆé‹å‹•å­¦");
+		float u10_2_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½ãƒ­ãƒœãƒƒãƒˆ");
+		float u10_2_5 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",441); //å‰µé€ çš„ãƒ­ãƒœãƒ†ã‚£ã‚¯ã‚¹æ¼”ç¿’â… 
+		float u10_2_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ å·¥å­¦");
+		float u10_2_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "åŸºç¤è¨­è¨ˆå·¥å­¦");
+		float u10_2_8 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",444);//ã‚·ã‚¹ãƒ†ãƒ åˆ¶å¾¡â…¡
+		float u10_2_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ åˆ¶å¾¡æ¼”ç¿’");
+		float u10_2_10 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨",446);//ãƒ—ãƒ­ã‚°ãƒ©ãƒŸãƒ³ã‚°æ¼”ç¿’â…¡
+		float u10_2_11 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°ã‚¼ãƒŸãƒŠãƒ¼ãƒ«");
+		float u10_2_12 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çµ„è¾¼ã¿ã‚·ã‚¹ãƒ†ãƒ ");
+		float u10_2_13 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒ­ãƒœãƒƒãƒˆã‚»ãƒ³ã‚·ãƒ³ã‚°");
+		float u10_2_14 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å¿œç”¨è¨­è¨ˆå·¥å­¦");
+		float u10_2_15 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚·ã‚¹ãƒ†ãƒ å·¥å­¦æ¼”ç¿’");
+		float u10_2_16 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
+		float u10_2_17 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 471);//å‰µé€ çš„ãƒ­ãƒœãƒ†ã‚£ã‚¯ã‚¹æ¼”ç¿’â…¡
 
-	//–¢CŒ¾Œê‰È–ÚC•ÛŒ’‘Ìˆç‰È–ÚC—Œn‹¤’ÊŠî‘b‰È–ÚCê–å‹³ˆç‰È–ÚŒQ
-	float u111 = unitsum(lectures, "Šî‘b‰È–Ú", "–¢CŒ¾Œê");
-	float u112 = unitsum(lectures, "Šî‘b‰È–Ú", "•ÛŒ¯‘Ìˆç");
-	float u11 = u10 + u5 + u111 + u112;
+		u10_2 = u10_2_0 + u10_2_1 + u10_2_2 + u10_2_3 + u10_2_4 + u10_2_5 + u10_2_5 + u10_2_6 + u10_2_7 + u10_2_8 + u10_2_9 + u10_2_10 + u10_2_11 + u10_2_12 + u10_2_13 + u10_2_14 + u10_2_15 + u10_2_16 + u10_2_17;
+	}
+	else if (courseSelection == 1) {//çŸ¥èƒ½
+		float u10_2_0 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°å¿œç”¨å®Ÿé¨“");
+		float u10_2_1 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°æ¦‚è«–");
+		float u10_2_2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“ç”Ÿç†å·¥å­¦");
+		float u10_2_3 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“çµ±è¨ˆå­¦");
+		float u10_2_4 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ãƒã‚¤ã‚ªãƒ¡ã‚«ãƒ‹ã‚¯ã‚¹");
+		float u10_2_5 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿç†æµä½“å·¥å­¦");
+		float u10_2_6 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç¦ç¥‰æ©Ÿå™¨å·¥å­¦");
+		float u10_2_7 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“è¨ˆæ¸¬å·¥å­¦");
+		float u10_2_8 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ã‚¨ãƒãƒ«ã‚®ãƒ¼å¤‰æ›å·¥å­¦");
+		float u10_2_9 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“ææ–™å¼·åº¦å·¥å­¦");
+		float u10_2_10 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 453);//ç”Ÿä½“æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â… 
+		float u10_2_11 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°ã‚¼ãƒŸãƒŠãƒ¼ãƒ«");
+		float u10_2_12 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "å†ç”ŸåŒ»å·¥å­¦");
+		float u10_2_13 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "äººé–“å·¥å­¦");
+		float u10_2_14 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "æ•°å€¤è§£ææ³•");
+		float u10_2_15 = unitsum4(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", 466);//ç”Ÿä½“æ©Ÿæ¢°å·¥å­¦æ¼”ç¿’â…¡
+		float u10_2_16 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
+		float u10_2_17 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿå‘½ç†è«–");
 
-	//‘’PˆÊ
+		u10_2 = u10_2_0 + u10_2_1 + u10_2_2 + u10_2_3 + u10_2_4 + u10_2_5 + u10_2_6 + u10_2_7 + u10_2_8 + u10_2_9 + u10_2_10 + u10_2_11 + u10_2_12 + u10_2_13 + u10_2_14 + u10_2_15 + u10_2_16 + u10_2_17;
+	}
+
+	float u10 = u6 + u7 + u8 + u10_1+ u10_2;//å­¦éƒ¨å¤–ã®å˜ä½ã‚‚å¿…è¦ï¼ˆæœªå®Ÿè£…ï¼‰
+
+	//æœªä¿®è¨€èªç§‘ç›®ï¼Œä¿å¥ä½“è‚²ç§‘ç›®ï¼Œç†ç³»å…±é€šåŸºç¤ç§‘ç›®ï¼Œå°‚é–€æ•™è‚²ç§‘ç›®ç¾¤
+	float u11_1 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "æœªä¿®è¨€èª");
+	float u11_2 = unitsum(lectures, "åŸºç¤ç§‘ç›®", "ä¿é™ºä½“è‚²");
+	float u11 = u10 + u5 + u11_1 + u11_2;
+
+	//ç·å˜ä½
 	float u12 = u11 + u1 + u2 + u3 + u4;
 
-	//æ“¾’PˆÊ”‚ÌŠi”[
+	//ç¢ºèª
+	cout << u1 << endl << u2 << endl << u3 << endl << u4 << endl << u5 << endl << u6 << endl << u7 << endl << u8 << endl << u9 << endl << u10 << endl << u11 << endl << u12<<endl;
+
+	//å–å¾—å˜ä½æ•°ã®æ ¼ç´
 	Unitnum3 num(u1, u2, u3, u4, u5, u6, u7, u8, u9, u10, u11, u12);
 	num3.push_back(num);
 
-	//•K—v’PˆÊ”‚ÌŠi”[
+	//å¿…è¦å˜ä½æ•°ã®æ ¼ç´
 	Unitnum3 nnum(14, 2, 2, 8, 20, 16, 10, 32, 2, 62, 86, 112);
 	num3.push_back(nnum);
 
-	//•K—v’PˆÊ”‚Ææ“¾’PˆÊ”‚Ì”äŠr
+	//å¿…è¦å˜ä½æ•°ã¨å–å¾—å˜ä½æ•°ã®æ¯”è¼ƒ
 	compareUnits(num3[0], num3[1]);
 
 
-	/*‘²‹Æ—vŒ*/
+	/*å’æ¥­è¦ä»¶*/
 	vector<Unitnum4>num4;
-	//ƒR[ƒX‹¤’ÊŠî‘b‰È–Ú,ƒR[ƒX‹¤’Êê–å‰È–Ú,ƒR[ƒXê–å‰È–Ú
+	//ã‚³ãƒ¼ã‚¹å…±é€šåŸºç¤ç§‘ç›®,ã‚³ãƒ¼ã‚¹å…±é€šå°‚é–€ç§‘ç›®,ã‚³ãƒ¼ã‚¹å°‚é–€ç§‘ç›®
 	float u21 = u6 + u7 + u8;
 
-	//’m”\E¶‘Ì‹@ŠB“Á•ÊŒ¤‹†
+	//çŸ¥èƒ½ãƒ»ç”Ÿä½“æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶
 	float u22 = 0;
 	if (courseSelection == 1) {
-		u2 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "’m”\‹@ŠB“Á•ÊŒ¤‹†");
+		u2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "çŸ¥èƒ½æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
 	}
 	else if (courseSelection == 2) {
-		u2 = unitsum2(lectures, "ê–å‹³ˆç‰È–Ú", "ƒVƒXƒeƒ€ƒfƒUƒCƒ“Šw•”", "¶‘Ì‹@ŠB“Á•ÊŒ¤‹†");
+		u2 = unitsum2(lectures, "å°‚é–€æ•™è‚²ç§‘ç›®", "ã‚·ã‚¹ãƒ†ãƒ ãƒ‡ã‚¶ã‚¤ãƒ³å­¦éƒ¨", "ç”Ÿä½“æ©Ÿæ¢°ç‰¹åˆ¥ç ”ç©¶");
 	}
 	else {
 		u2 = 0;
 	}
-	//ê–å‹³ˆç‰È–ÚŒQ
+	//å°‚é–€æ•™è‚²ç§‘ç›®ç¾¤
 	float u23 = u10;
-	//–¢CŒ¾Œê‰È–ÚC•ÛŒ’‘Ìˆç‰È–ÚC—Œn‹¤’ÊŠî‘b‰È–ÚCê–å‹³ˆç‰È–ÚŒQ
+	//æœªä¿®è¨€èªç§‘ç›®ï¼Œä¿å¥ä½“è‚²ç§‘ç›®ï¼Œç†ç³»å…±é€šåŸºç¤ç§‘ç›®ï¼Œå°‚é–€æ•™è‚²ç§‘ç›®ç¾¤
 	float u24 = u11;
-	//‘’PˆÊ
+	//ç·å˜ä½
 	float u25 = u12;
 
-	//æ“¾’PˆÊ”‚ÌŠi”[
+	//å–å¾—å˜ä½æ•°ã®æ ¼ç´
 	Unitnum4 num2(u21, u22, u23, u24, u25);
 	num4.push_back(num2);
 
-	//•K—v’PˆÊ”‚ÌŠi”[
+	//å¿…è¦å˜ä½æ•°ã®æ ¼ç´
 	Unitnum4 nnum2(66, 8, 80, 104, 130);
 	num4.push_back(nnum2);
 
-	//•K—v’PˆÊ”‚Ææ“¾’PˆÊ”‚Ì”äŠr
+	//å¿…è¦å˜ä½æ•°ã¨å–å¾—å˜ä½æ•°ã®æ¯”è¼ƒ
 	compareUnits2(num4[0], num4[1]);
 
 
-	//GPA‚ÌŒvZ‚Æ‡ˆÊŒvZ
+	//GPAã®è¨ˆç®—ã¨é †ä½è¨ˆç®—
 	float gpa = calculateGPA(lectures);
-	cout << "æ“¾’PˆÊ‚ÌGPAiGrade Point Averagej‚Í: " << gpa << "‚Å‚·B" << endl;
+	cout << "å–å¾—å˜ä½ã®GPAï¼ˆGrade Point Averageï¼‰ã¯: " << gpa << "ã§ã™ã€‚" << endl;
 
-	// ‡ˆÊ‚ğŒvZ‚µ‚Ä•\¦
+	// é †ä½ã‚’è¨ˆç®—ã—ã¦è¡¨ç¤º
 	
 
 
-	//Šm”F
-	/*for (const auto& lec : lectures) {
-		cout << "    " << lec.category << "    " << lec.lecturekinds << "   " << lec.lecturenum << "   " << lec.lecturename << "     " << lec.unit << "      " << lec.value << "      " << lec.year << endl;
-	}*/
+	//ç¢ºèª
+	for (const auto& lec : lectures) {
+		cout << "    ." << lec.category << "    ." << lec.lecturekinds << "   ." << lec.lecturenum << ".   ." << lec.lecturename << "     " << lec.unit << "      " << lec.value << "      " << lec.year << endl;
+	}
 
-	return 0;
+	return 0; 
 }
