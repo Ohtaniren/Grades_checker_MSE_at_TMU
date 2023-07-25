@@ -422,7 +422,7 @@ int main() {
 	float u8_1_14 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工場見学");
 	float u8_1 = u8_1_1 + u8_1_2 + u8_1_3 + u8_1_4 + u8_1_5 + u8_1_6 + u8_1_7 + u8_1_8 + u8_1_9 + u8_1_10 + u8_1_11+ u8_1_12 + u8_1_13 + u8_1_14;
 	//コース専門科目
-	float u8_2 ; 
+	float u8_2 = 0; 
 	if (courseSelection == 1) {//知能
 		float u8_2_0 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
 		float u8_2_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械概論");
@@ -467,7 +467,7 @@ int main() {
 	}
 	 float u8 = u8_1 + u8_2;
 	//u9:知能・生体機械応用実験
-	float u9;
+	float u9=0;
 	if (courseSelection == 1) {
 		u9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
 	}
@@ -485,7 +485,7 @@ int main() {
 	float u10_1_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "産業と法規");
 	float u10_1 = u10_1_1 + u10_1_2 + u10_1_3 + u10_1_4 + u10_1_5 + u10_1_6 + u10_1_7;
 	//所属コースでない科目
-	float u10_2;
+	float u10_2 =0;
 	if (courseSelection == 2) {//生体
 		float u10_2_0 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械応用実験");
 		float u10_2_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械概論");
@@ -556,7 +556,7 @@ int main() {
 	//u21:コース共通基礎科目,コース共通専門科目,コース専門科目
 	float u21 = u6 + u7 + u8;
 	//u22:知能・生体機械特別研究
-	float u22;
+	float u22=0;
 	if (courseSelection == 1) {
 		u22 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "知能機械特別研究");
 	}
