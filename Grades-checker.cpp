@@ -264,16 +264,16 @@ else{
 
 //gpa 計算関数
 float calculateGPA(const vector<lecture>& lectures) {
-	float totalGradePoints = 0.0;
+	float totalGrade = 0.0;
 	float totalUnits = 0.0;
 
 	for (const auto& lec : lectures) {
-		totalGradePoints += lec.value * lec.unit;
+		totalGrade += lec.value * lec.unit;
 		totalUnits += lec.unit;
 	}
 
 	if (totalUnits > 0) {
-		return totalGradePoints / totalUnits;
+		return totalGrade / totalUnits;
 	}
 	else {
 		return 0.0;
@@ -284,7 +284,7 @@ float calculateGPA(const vector<lecture>& lectures) {
 
 //メイン関数
 int main() {
-	//メッセージの表示（操作の手順の説明）
+	//操作の手順の説明
 	cout << "～～使い方～～" << endl;
 	cout << "【１】所属コースを選択してください" << endl;
 	cout << "【２】『CAMPUSSQUAREにログイン』 → 『成績』 → 『過去を含めた全成績を選択』 → 『画面に表示するをクリック』" << endl;
@@ -334,7 +334,7 @@ int main() {
 			string name = elements[4];
 			float unit = stof(elements[6]);//文字列をfloatに変換
 			string grade = elements[9];
-			int value = convertGradeToValue(grade);//変換関数
+			int value = convertGradeToValue(grade);//漢字を数値に変換
 			int year = stoi(elements[7]);
 
 			// numを1文字目と2文字目以降に分割して保存（数値のみ保存させる）
@@ -375,14 +375,19 @@ int main() {
 	float u1_4 = unitsum(lectures, "基盤科目", "自然科学領域");
 	float u1_5 = unitsum(lectures, "基礎科目", "キャリア教育");
 	float u1 = u1_1+ u1_2 + u1_3 + u1_4 + u1_5 ;
+
 	//u2:基礎ゼミナール
 	float u2 = unitsum(lectures, "基礎科目", "基礎ゼミナール");
+
 	//u3:情報リテラシー実践Ⅰ
 	float u3 = unitsum(lectures, "基礎科目", "情報科目");
+
 	//u4:実践英語
 	float u4 = unitsum(lectures, "基礎科目", "実践英語");
+
 	//u5:理系共通基礎科目
 	float u5 = unitsum(lectures, "基礎科目", "理系共通基礎科目"); 
+
 	//u6:コース共通基礎科目（必修）
 	float u6_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "工業力学");
 	float u6_2 = unitsum4(lectures, "専門教育科目", "システムデザイン学部",417);//材料力学Ⅰ
@@ -393,6 +398,7 @@ int main() {
 	float u6_7 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械システム基礎実験");
 	float u6_8 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "機械工作実習");
 	float u6 = u6_1 + u6_2 + u6_3 + u6_4 + u6_5 + u6_6 + u6_7 + u6_8;
+
 	//u7:コース共通基礎科目（選択）
 	float u7_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "計測工学");
 	float u7_2 = unitsum4(lectures, "専門教育科目", "システムデザイン学部", 407);//プログラミング演習Ⅰ
@@ -404,6 +410,7 @@ int main() {
 	float u7_8 = unitsum4(lectures, "専門教育科目", "システムデザイン学部", 426);//システム制御Ⅰ
 	float u7_9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "電子回路");
 	float u7 = u7_1 + u7_2 + u7_3 + u7_4 + u7_5 + u7_6 + u7_7 + u7_8 + u7_9;
+
 	//u8:コース共通専門科目，コース専門科目
 	//コース共通専門科目
 	float u8_1_1 = unitsum4(lectures, "専門教育科目", "システムデザイン学部", 419);//材料力学Ⅱ
@@ -466,6 +473,7 @@ int main() {
 		u8_2 = u8_2_0 + u8_2_1 + u8_2_2 + u8_2_3 + u8_2_4 + u8_2_5 + u8_2_6 + u8_2_7 + u8_2_8 + u8_2_9 + u8_2_10 + u8_2_11 + u8_2_12 + u8_2_13 + u8_2_14 + u8_2_15 + u8_2_16 + u8_2_17;
 	}
 	 float u8 = u8_1 + u8_2;
+
 	//u9:知能・生体機械応用実験
 	float u9=0;
 	if (courseSelection == 1) {
@@ -474,6 +482,7 @@ int main() {
 	else if (courseSelection == 2) {
 		u9 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械応用実験");
 	}
+
 	//u10:専門教育科目群
 	//学部共通科目
 	float u10_1_1 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "情報と職業");
@@ -530,16 +539,24 @@ int main() {
 
 		u10_2 = u10_2_0 + u10_2_1 + u10_2_2 + u10_2_3 + u10_2_4 + u10_2_5 + u10_2_6 + u10_2_7 + u10_2_8 + u10_2_9 + u10_2_10 + u10_2_11 + u10_2_12 + u10_2_13 + u10_2_14 + u10_2_15 + u10_2_16 + u10_2_17;
 	}
-	float u10 = u6 + u7 + u8 + u10_1+ u10_2;//学部外の単位も必要（未実装）
+	//学部外科目と副専攻
+	float u10_3_1 = unitsum(lectures, "専門教育科目", "人文社会学部");
+	float u10_3_2 = unitsum(lectures, "専門教育科目", "法学部");
+	float u10_3_3 = unitsum(lectures, "専門教育科目", "経済経営学部");
+	float u10_3_4 = unitsum(lectures, "専門教育科目", "理学部");
+	float u10_3_5 = unitsum(lectures, "専門教育科目", "都市環境学部");
+	float u10_3_6 = unitsum(lectures, "専門教育科目", "健康福祉学部");
+	float u10_3_7 = unitsum(lectures, "専門教育科目", "副専攻");
+	float u10_3 = u10_3_1 + u10_3_2 + u10_3_3 + u10_3_4 + u10_3_5 + u10_3_6 + u10_3_7;
+	float u10 = u6 + u7 + u8 + u10_1 + u10_2 + u10_3;
+
 	//u11:未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群
 	float u11_1 = unitsum(lectures, "基礎科目", "未修言語");
 	float u11_2 = unitsum(lectures, "基礎科目", "保険体育");
 	float u11 = u10 + u5 + u11_1 + u11_2;
+
 	//u12:総単位
 	float u12 = u11 + u1 + u2 + u3 + u4;
-
-	//確認用
-	//cout << u1 << endl << u2 << endl << u3 << endl << u4 << endl << u5 << endl << u6 << endl << u7 << endl << u8 << endl << u9 << endl << u10 << endl << u11 << endl << u12<<endl;
 
 	//取得単位数の格納
 	vector<Unitnum3>num3;
@@ -555,6 +572,7 @@ int main() {
 	/*卒業要件(3年修了判定を満たしているとき)*/
 	//u21:コース共通基礎科目,コース共通専門科目,コース専門科目
 	float u21 = u6 + u7 + u8;
+
 	//u22:知能・生体機械特別研究
 	float u22=0;
 	if (courseSelection == 1) {
@@ -563,11 +581,14 @@ int main() {
 	else if (courseSelection == 2) {
 		u22 = unitsum2(lectures, "専門教育科目", "システムデザイン学部", "生体機械特別研究");
 	}
+
 	//u23:専門教育科目群
 	float u23 = u10;
-	//未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群
+
+	//u24:未修言語科目，保健体育科目，理系共通基礎科目，専門教育科目群
 	float u24 = u11;
-	//総単位
+
+	//u25:総単位
 	float u25 = u12;
 
 	//取得単位数の格納
@@ -585,11 +606,6 @@ int main() {
 	float gpa = calculateGPA(lectures);
 	cout << "取得単位のGPA（Grade Point Average）は: " << gpa << "です。" << endl;
 	
-	
-	//確認用
-	/*for (const auto& lec : lectures) {
-		cout << "    ." << lec.category << "    ." << lec.lecturekinds << "   ." << lec.lecturenum << ".   ." << lec.lecturename << "     " << lec.unit << "      " << lec.value << "      " << lec.year << endl;
-	}*/
 
 	return 0; 
 }
