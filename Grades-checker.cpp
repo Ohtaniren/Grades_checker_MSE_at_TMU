@@ -105,7 +105,9 @@ float unitsum(const vector<lecture>& lectures, const string& category, const str
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
 		if (lec.category == category && lec.lecturekinds == kinds) {
-			unitSum += lec.unit;
+			if (lec.value != 0) {
+				unitSum += lec.unit;
+			}
 		}
 	}
 	return unitSum;
@@ -115,7 +117,9 @@ float unitsum2(const vector<lecture>& lectures, const string& category, const st
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
 		if (lec.category == category && lec.lecturekinds == kinds && lec.lecturename == lecturename) {
-			unitSum += lec.unit;
+			if (lec.value != 0) {
+				unitSum += lec.unit;
+			}
 		}
 	}
 	return unitSum;
@@ -125,7 +129,9 @@ float unitsum3(const vector<lecture>& lectures, const string& category, const st
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
 		if (lec.category == category && lec.lecturekinds == kinds && lec.lecturename == lecturename && lec.lecturenum == lecturenum) {
-			unitSum += lec.unit;
+			if (lec.value != 0) {
+				unitSum += lec.unit;
+			}
 		}
 	}
 	return unitSum;
@@ -135,7 +141,9 @@ float unitsum4(const vector<lecture>& lectures, const string& category, const st
 	float unitSum = 0.0;
 	for (const auto& lec : lectures) {
 		if (lec.category == category && lec.lecturekinds == kinds  && lec.lecturenum == lecturenum) {
-			unitSum += lec.unit;
+			if (lec.value != 0) {
+				unitSum += lec.unit;
+			}
 		}
 	}
 	return unitSum;
